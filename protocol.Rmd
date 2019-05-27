@@ -1,0 +1,28 @@
+---
+title: "ODMAP Protocol"
+output: "html_document""
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
+```
+
+
+### ODMAP Protocol  
+
+#### Title: `r I(input$title)` 
+#### Authors: `r names_textInput`  
+#### Affiliation: `r I(input$affiliation)`  
+#### Email: `r I(input$email)`
+
+___
+
+```{r}
+# input$study_objective
+# tmp = grep("select", names(input), value = T)
+# tmp_values = c()
+# for(i in 1:length(tmp)){
+#   tmp_name = tmp[i]
+#   tmp_values = c(tmp_valuesinput[[tmp_name]])
+# }
+```
