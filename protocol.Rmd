@@ -6,23 +6,44 @@ output: "html_document""
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 ```
+<center>
+#### ODMAP Protocol
+
+## `r input$title`
+
+</center>
+`r input$authors`
+`r input$email`
 
 
-### ODMAP Protocol  
-
-#### Title: `r I(input$title)` 
-#### Authors: `r names_textInput`  
-#### Affiliation: `r I(input$affiliation)`  
-#### Email: `r I(input$email)`
-
-___
-
-```{r}
-# input$study_objective
-# tmp = grep("select", names(input), value = T)
-# tmp_values = c()
-# for(i in 1:length(tmp)){
-#   tmp_name = tmp[i]
-#   tmp_values = c(tmp_valuesinput[[tmp_name]])
-# }
+________
+```{r, results = 'asis'}
+section = ""
+subsection = ""
+for(i in 1:nrow(elem_input)){
+  # Find out if new section header needs to be rendered
+  section_new = elem_input$section_id[i] 
+  if(section_new != section & !(section_new %in% elem_hide[[input$study_objective]])){
+    section = section_new
+    knit_section(section)
+  }
+  
+  # Find out if new subsection header needs to be rendered
+  subsection_new = elem_input$subsection_id[i] 
+  if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$study_objective]])){
+    subsection = subsection_new
+    knit_subsection(subsection)
+  } 
+  
+  # Render paragraphs
+  paragraph_id = elem_input$paragraph_id[i]
+  if(paragraph_id %in% names(input)){
+    if(input[[paragraph_id]] == ""){
+      knit_element_empty(paragraph_id)
+    } else {
+      knit_element_text(paragraph_id)
+    }
+  }
+  
+}
 ```
