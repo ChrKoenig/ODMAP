@@ -1,49 +1,51 @@
 ---
-title: "ODMAP Protocol"
-output: "html_document""
+runtime: shiny
+output: html_document
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 ```
 <center>
-#### ODMAP Protocol
-
-## `r input$title`
-
+#### ODMAP protocol  
 </center>
-`r input$authors`
-`r input$email`
 
-
-________
 ```{r, results = 'asis'}
-section = ""
-subsection = ""
-for(i in 1:nrow(elem_input)){
-  # Find out if new section header needs to be rendered
-  section_new = elem_input$section_id[i] 
-  if(section_new != section & !(section_new %in% elem_hide[[input$study_objective]])){
-    section = section_new
-    knit_section(section)
-  }
+if(input$title == "" | input$authors == "" | input$email == "" | input$study_objective == ""){
+  cat("<b><center>Please fill out the general information form.</center></b>")
+} else {
+  cat("<h2><center>", input$title, "</center></h2>")
+  cat("<p>", input$authors, "</p>")
+  cat("<p>", input$email, "</p>")
+  cat("<p>", as.character(Sys.Date()), "</p>")
+  cat("\n", "______________", "\n")
   
-  # Find out if new subsection header needs to be rendered
-  subsection_new = elem_input$subsection_id[i] 
-  if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$study_objective]])){
-    subsection = subsection_new
-    knit_subsection(subsection)
-  } 
-  
-  # Render paragraphs
-  paragraph_id = elem_input$paragraph_id[i]
-  if(paragraph_id %in% names(input)){
-    if(input[[paragraph_id]] == ""){
-      knit_element_empty(paragraph_id)
-    } else {
-      knit_element_text(paragraph_id)
+  # Document content
+  section = ""
+  subsection = ""
+  for(i in 1:nrow(elem_input)){
+    # Find out if new section header needs to be rendered
+    section_new = elem_input$section_id[i]
+    if(section_new != section & !(section_new %in% elem_hide[[input$study_objective]])){
+      section = section_new
+      knit_section(section)
+    }
+
+    # Find out if new subsection header needs to be rendered
+    subsection_new = elem_input$subsection_id[i]
+    if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$study_objective]])){
+      subsection = subsection_new
+      knit_subsection(subsection)
+    }
+
+    # Render paragraphs
+    paragraph_id = elem_input$paragraph_id[i]
+    if(paragraph_id %in% names(input)){
+      if(input[[paragraph_id]] == ""){
+        knit_element_empty(paragraph_id)
+      } else {
+        knit_element_text(paragraph_id)
+      }
     }
   }
-  
 }
 ```
