@@ -49,7 +49,7 @@ ui <- tagList(
       sidebarPanel(
         width = 2,
         materialSwitch("toggle_optional", label = "Hide optional fields", status = "danger"),
-        radioButtons("document_format", label = "Download protocol", choices = c("docx", "csv")),
+        radioButtons("document_format", label = "Download protocol", choices = c("doc", "csv")),
         downloadButton("protocol_download")
       ),
       
@@ -71,27 +71,27 @@ ui <- tagList(
           tabPanel("1. Overview", value = "Overview",  fluidPage(
             em(p("Give a brief overview of all important parts of your study. This part may go to the method section of your manuscript.", 
                  style = "padding-top: 10px; font-weight: 300")),
-            uiOutput("Overview")
+            uiOutput("Overview_UI")
           )),
           
           tabPanel("2. Data", value = "Data", fluidPage(
             em(p("Describe your your data in detail.", style = "padding-top: 10px; font-weight: 300")),
-            uiOutput("Data")
+            uiOutput("Data_UI")
           )),
           
           tabPanel("3. Model", value = "Model", fluidPage(
             em(p("Describe your modeling approach in detail.", style = "padding-top: 10px; font-weight: 300")),
-            uiOutput("Model")
+            uiOutput("Model_UI")
           )),
           
           tabPanel("4. Assessment", value = "Assessment", fluidPage(
             em(p("Describe how you assessed your model results.", style = "padding-top: 10px; font-weight: 300")),
-            uiOutput("Assessment")
+            uiOutput("Assessment_UI")
           )),
           
           tabPanel("5. Prediction", value = "Prediction", fluidPage(
             em(p("Describe your model predictions in detail.", style = "padding-top: 10px; font-weight: 300")),
-            uiOutput("Prediction")
+            uiOutput("Prediction_UI")
           )) 
         ))
     )),
@@ -101,6 +101,14 @@ ui <- tagList(
       fluidRow(
         column(width = 2),
         column(width = 8, htmlOutput("markdown")),
+        column(width = 2)
+      )
+    )),
+    
+    tabPanel("Upload a Protocol", value = "tab_4", fluidPage(
+      fluidRow(
+        column(width = 2),
+        column(width = 8, uiOutput("Upload_UI")),
         column(width = 2)
       )
     ))
@@ -164,7 +172,7 @@ server <- function(input, output, session) {
   # Functions for dynamically knitting text elements
   knit_section= function(section_id){
     section = unique(elem_input$section[which(elem_input$section_id == section_id)])
-    cat("<h2>", section, "</h2>", "\n")
+    cat("\n\n##", section, "\n")
   }
   
   knit_subsection= function(subsection_id){
@@ -178,7 +186,7 @@ server <- function(input, output, session) {
     
     # If not, render header
     if(!all_optional){
-      cat("<h4>", subsection, "</h4>", "\n")
+      cat("\n\n####", subsection, "\n")
     } else { # if not, render header only when user provided optional inputs
       all_empty = T
       for(id in paragraph_ids){
@@ -188,24 +196,25 @@ server <- function(input, output, session) {
         }
       }
       if(!all_empty){
-        cat("<h4>", subsection, "</h4>", "\n")
+        cat("\n\n####", subsection, "\n")
       }
     }
   }
+  
   knit_element_text = function(elem_name){
-    cat(input[[elem_name]], "\n")
+    cat(input[[elem_name]], "  ")
   }
   
   knit_element_empty = function(elem_name){
     if(!(elem_name %in% elem_hide[[input$study_objective]] | elem_name %in% elem_optional)){
       placeholder = elem_input$paragraph[which(elem_input$paragraph_id == elem_name)]
-      cat("<span style='color:salmon'>", "[", placeholder,"]", "</span>", "\n", sep = "")
+      cat("\\<", placeholder, "\\>  ", sep = "")
     }
   }
   
   # Render Output
   output$markdown = renderUI({
-    includeMarkdown(knitr::knit("protocol.Rmd", quiet = T))
+    includeMarkdown(knitr::knit("protocol_preview.Rmd", quiet = T))
   })
   
   ####################
@@ -237,34 +246,84 @@ server <- function(input, output, session) {
   }
   
   # Render Output
-  output$Overview = render_section("Overview", elem_input)
-  output$Data = render_section("Data", elem_input)
-  output$Model = render_section("Model", elem_input)
-  output$Assessment = render_section("Assessment", elem_input)
-  output$Prediction = render_section("Prediction", elem_input)
+  output$Overview_UI = render_section("Overview", elem_input)
+  output$Data_UI = render_section("Data", elem_input)
+  output$Model_UI = render_section("Model", elem_input)
+  output$Assessment_UI = render_section("Assessment", elem_input)
+  output$Prediction_UI = render_section("Prediction", elem_input)
   
   # Add tab contents to output object before rendering
-  for(tab in c("Overview", "Data", "Model", "Assessment", "Prediction")){
+  for(tab in c("Overview_UI", "Data_UI", "Model_UI", "Assessment_UI", "Prediction_UI")){
     outputOptions(output, tab, suspendWhenHidden = FALSE)
   } 
   
-  #################
-  ### Downloads ###
-  #################
+  ################
+  ### Download ###
+  ################
   output$protocol_download = downloadHandler(
     filename = function(){
-      paste0("ODMAP_protocol_", Sys.Date(), ".csv")
+      paste0("ODMAP_protocol_", Sys.Date(), ".", input$document_format)
     },
     content = function(file){
-      odmap_csv = elem_input %>% 
+      elem_output = elem_input %>% 
         filter(!paragraph_id %in% elem_hide[[input$study_objective]]) %>% # use only relevent rows
         select(section, subsection, paragraph, paragraph_id)
       
-      odmap_csv$desciption = sapply(odmap_csv$paragraph_id, function(x){input[[x]]})
-      odmap_csv$paragraph_id = NULL
-      write.csv(odmap_csv, file)
+      if(input$document_format == "csv"){
+        elem_output$description = sapply(elem_output$paragraph_id, function(x){input[[x]]})
+        elem_output$paragraph_id = NULL
+        write.csv(elem_output, file, row.names = F)  
+      } else {
+        src <- normalizePath("protocol_output.Rmd")
+        
+        # temporarily switch to the temp dir, in case you do not have write permission to the current working directory
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+        file.copy(src, "protocol_output.Rmd", overwrite = TRUE)
+        report_output = rmarkdown::render("protocol_output.Rmd", rmarkdown::word_document(),
+                                          params = list(title = input$title,
+                                                        authors = input$authors))
+        file.rename(report_output, file)
+      }
     }
   )
+  
+  ##############-
+  ### Upload ###
+  ##############
+  output$Upload_UI = renderUI({
+    # Basic Upload Dialog
+    UI_list = list(
+      p("You can upload your previously saved ODMAP protocol (.csv-files only) and resume working in the Shiny app."),
+      fileInput("upload", "Choose file",  accept = c(".csv"))
+    )
+    
+    if(!is.null(input$upload)){
+      protocol_upload =  read.csv(input$upload$datapath)
+      if(all(c("section", "subsection", "paragraph", "description") %in% colnames(protocol_upload)) & nrow(protocol_upload) > 0){
+        UI_list[[3]] = p(paste("File:", input$upload$name))
+        UI_list[[4]] = radioButtons("replace_values", "Replace existing values?", choices = c("Yes", "No"), selected = "No")
+        UI_list[[5]] = actionButton("copy_to_input", "Copy to input form")
+      } else {
+        UI_list[[3]] = p("Invalid file")
+      }
+    }
+    return(UI_list)
+  })
+  
+  observeEvent(input$copy_to_input, {
+    protocol_upload =  read.csv(input$upload$datapath, stringsAsFactors = F) %>% 
+      left_join(elem_input, by = c("section", "subsection", "paragraph")) %>% 
+      mutate(description = trimws(description)) %>% 
+      filter(description != "")
+    
+    for(i in 1:nrow(protocol_upload)){
+      if(!(input[[protocol_upload$paragraph_id[i]]] != "" & input$replace_values == "No")){
+              updateTextAreaInput(session, inputId = protocol_upload$paragraph_id[i], value = protocol_upload$description[i])
+      }
+    }
+    updateNavbarPage(session, "navbar", selected = "tab_2")
+  })
 }
 
 # RUN APP 

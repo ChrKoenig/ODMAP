@@ -27,8 +27,8 @@ Data,d,Species data,d_spec_dat,Sample size,d_spec_dat_5,"Details on sample size 
 Data,d,Species data,d_spec_dat,Errors and biases,d_spec_dat_6,"Details on potential errors and biases in data, if applicable: e.g., detection probability, misidentification potential, geo-referencing errors, sampling bias",1,1,1,1
 Data,d,Species data,d_spec_dat,Cleaning,d_spec_dat_7,"Details on data cleaning/filtering steps, if applicable: e.g., taxonomically, spatially, temporally, outlier presence/treatment",1,1,1,1
 Data,d,Species data,d_spec_dat,Scaling,d_spec_dat_8,"Details on scaling, if applicable: e.g., rasterisation of polygon maps, spatial and temporal thinning, measures to address spatial uncertainties",1,1,1,1
-Data,d,Absence and background data,d_abs,Absence data,d_abs_dat_1,"Details on absence data collection, if applicable",0,1,1,1
-Data,d,Absence and background data,d_abs,Background data,d_abs_dat_2,"Details on background data derivation, if applicable: e.g., spatial and temporal extent, spatial and temporal buffer, bias correction (e.g. target group sampling)",0,1,1,1
+Data,d,Species data,d_spec_dat,Absence data,d_spec_dat_9,"Details on absence data collection, if applicable",0,1,1,1
+Data,d,Species data,d_spec_dat,Background data,d_spec_dat_10,"Details on background data derivation, if applicable: e.g., spatial and temporal extent, spatial and temporal buffer, bias correction (e.g. target group sampling)",0,1,1,1
 Data,d,Data partitioning,d_part,Training data,d_part_1,Selection of training data (for model fitting),0,0,1,1
 Data,d,Data partitioning,d_part,Validation data,d_part_2,"Selection of validation data (withheld from model fitting, used for estimating prediction error for model selection, model averaging or ensemble): e.g., cross-validation method ",0,0,1,1
 Data,d,Data partitioning,d_part,Test data,d_part_3,"Selection of test (truly independent) data , sensu Hastie, et al. (2009)",1,0,1,1

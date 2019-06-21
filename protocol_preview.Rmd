@@ -5,21 +5,19 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 ```
-<center>
-#### ODMAP protocol  
-</center>
+
 
 ```{r, results = 'asis'}
 if(input$title == "" | input$authors == "" | input$email == "" | input$study_objective == ""){
   cat("<b><center>Please fill out the general information form.</center></b>")
 } else {
   cat("<h2><center>", input$title, "</center></h2>")
+  cat("<h4><center> - ODMAP protocol - </center></h4>")
   cat("<p>", input$authors, "</p>")
   cat("<p>", input$email, "</p>")
   cat("<p>", as.character(Sys.Date()), "</p>")
   cat("\n", "______________", "\n")
   
-  # Document content
   section = ""
   subsection = ""
   for(i in 1:nrow(elem_input)){
@@ -29,19 +27,21 @@ if(input$title == "" | input$authors == "" | input$email == "" | input$study_obj
       section = section_new
       knit_section(section)
     }
-
+    
     # Find out if new subsection header needs to be rendered
     subsection_new = elem_input$subsection_id[i]
     if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$study_objective]])){
       subsection = subsection_new
       knit_subsection(subsection)
     }
-
+    
     # Render paragraphs
     paragraph_id = elem_input$paragraph_id[i]
     if(paragraph_id %in% names(input)){
       if(input[[paragraph_id]] == ""){
+        cat("<span style='color:#ff4c3f'>")
         knit_element_empty(paragraph_id)
+        cat("</span>")
       } else {
         knit_element_text(paragraph_id)
       }
