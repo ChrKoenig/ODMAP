@@ -16,7 +16,7 @@ ui <- tagList(
   
   navbarPage(
     id = "navbar",
-    title = "ODMAP",
+    title = "ODMAP v1.0",
     position = "fixed-top",
     theme = shinytheme("cosmo"),
     selected = "tab_1",
@@ -39,7 +39,9 @@ ui <- tagList(
                p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach todocumentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses."),
-               p("This application helps to implement the ODMAP approach and produces well formatted protocols that can be ...")
+               p("This application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. For further explanation please refer to the original publication (Zurell et al., under review)."),
+               em(p("Please cite as follows:")),
+               p("Zurell D,  Franklin J,  Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, König C, Leitão PJ, Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz D, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) A standard protocol for describing species distribution models.")
         ),
         column(width = 2)
       )
@@ -56,7 +58,13 @@ ui <- tagList(
       mainPanel(
         tabsetPanel(
           id = "tabset",
-          tabPanel("General information", value = "General", fluidPage(
+          tabPanel("0. General information", value = "General", fluidPage(
+            p("---------------------------"),
+            strong(p("How to create an ODMAP protocol:")),
+            p("Enter all relevant information into the fields provided in steps 0-5. The switch on the left allows you to hide optional fields and show only the mandatory fields. These will differ according to the model objective, which you can choose below."),
+            p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
+            p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.csv-files only)."),
+            p("---------------------------"),
             em(p("Provide some general information about your SDM study.", style = "padding-top: 10px; font-weight: 300")),
             h5("Study title", style = "font-weight: bold"),
             textInput("title", label = NULL),
@@ -64,12 +72,12 @@ ui <- tagList(
             textInput("authors", label = NULL),
             h5("Email adress of corresponding author", style = "font-weight: bold"),
             textInput("email", label = NULL),
-            h5("Study objective", style = "font-weight: bold"),
-            selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Prediction and mapping", "Projection and transfer"))
+            h5("Model objective", style = "font-weight: bold"),
+            selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
           )),
           
           tabPanel("1. Overview", value = "Overview",  fluidPage(
-            em(p("Give a brief overview of all important parts of your study. This part may go to the method section of your manuscript.", 
+            em(p("Give a brief overview of all important parts of your study.", 
                  style = "padding-top: 10px; font-weight: 300")),
             uiOutput("Overview_UI")
           )),
