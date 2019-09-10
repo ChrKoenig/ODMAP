@@ -1,9 +1,10 @@
+#library(plyr)
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinythemes)
+library(DT)
 library(tidyverse)
-library(plyr)
 
 #                                                                                                        #
 # ------------------------------------------------------------------------------------------------------ #
@@ -35,7 +36,7 @@ ui <- tagList(
              Despite the widespread use of SDMs, the standardisation and documentation of model protocols remains limited. To address these issues, 
              we propose a standard protocol for reporting SDMs. We call this the ODMAP (Overview, Data, Model, Assessment and Prediction) protocol
              as each of its components reflectsthe main steps involved in building SDMs and other empirically-based biodiversity models."), 
-               img(src = "workflow.jpg", width = "400", align = "center"),
+               img(src = "www/workflow.jpg", width = 400, align = "center"),
                p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach todocumentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses."),
@@ -59,21 +60,18 @@ ui <- tagList(
         tabsetPanel(
           id = "tabset",
           tabPanel("0. General information", value = "General", fluidPage(
-            p("---------------------------"),
-            strong(p("How to create an ODMAP protocol:")),
+            strong(p("How to create an ODMAP protocol", style = "padding-top: 10px")),
             p("Enter all relevant information into the fields provided in steps 0-5. The switch on the left allows you to hide optional fields and show only the mandatory fields. These will differ according to the model objective, which you can choose below."),
             p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
             p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.csv-files only)."),
-            p("---------------------------"),
-            em(p("Provide some general information about your SDM study.", style = "padding-top: 10px; font-weight: 300")),
+            hr(),
+            h5("Study objective", style = "font-weight: bold"),
+            selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer")),
             h5("Study title", style = "font-weight: bold"),
             textInput("title", label = NULL),
             h5("Author(s)", style = "font-weight: bold"),
-            textInput("authors", label = NULL),
-            h5("Email adress of corresponding author", style = "font-weight: bold"),
-            textInput("email", label = NULL),
-            h5("Model objective", style = "font-weight: bold"),
-            selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
+            dataTableOutput("authors_table"),
+            actionButton("add_author", label = NULL, icon = icon("plus"))
           )),
           
           tabPanel("1. Overview", value = "Overview",  fluidPage(
@@ -153,6 +151,79 @@ server <- function(input, output, session) {
   ######################
   ### EVENT HANDLERS ###
   ######################
+  # Authors
+  # Add dynamic name form
+  authors = reactiveValues()
+  authors$data = data.frame("first_name" = character(0), 
+                            "last_name" = character(0), 
+                            "affiliation" = character(0), 
+                            "email" = character(0), stringsAsFactors = F)
+  
+  output$authors_table = renderDataTable({
+    if(nrow(authors$data) == 0){
+      authors_table_render = datatable(authors$data, escape = F, rownames = F, colnames = NULL, 
+                                       options = list(dom = "t", ordering = F, language = list(emptyTable = "Author list is empty"), columnDefs = list(list(className = 'dt-left', targets = "_all"))))
+    } else {
+      authors_table = authors$data %>% 
+        rownames_to_column("row_id") %>% 
+        mutate(delete = sapply(1:nrow(.), function(row_id){as.character(actionButton(inputId = paste("remove_author", row_id, sep = "_"),
+                                                                                     label = NULL, 
+                                                                                     icon = icon("trash"),
+                                                                                     onclick = 'Shiny.setInputValue(\"removePressed\", this.id, {priority: "event"})'))}),
+               edit = sapply(1:nrow(.), function(row_id){as.character(actionButton(inputId = paste("edit_author", row_id, sep = "_"),
+                                                                                   label = NULL, 
+                                                                                   icon = icon("edit"),
+                                                                                   onclick = 'Shiny.setInputValue(\"editPressed\", this.id, {priority: "event"})'))})) %>% 
+        select(-row_id)
+      authors_table_render = datatable(authors_table, escape = F, rownames = F, colnames = c("First name", "Last name", "Affiliation", "email", "", ""),
+                                       options = list(dom = "t", ordering = F, autoWidth = TRUE, columnDefs = list(list(width = '30px', targets = c(4,5)), list(className = 'dt-center', targets = "_all"))))
+    }
+    authors_table_render
+  })
+  
+  observeEvent(input$add_author, {
+    showModal(
+      modalDialog(title = "Add new author", footer = NULL, easyClose = T,
+                  textInput("first_name", "First name"),
+                  textInput("last_name", "Last name"),
+                  textInput("affiliation", "Affiliation"),
+                  textInput("email", "Email address"),
+                  actionButton("save_new_author", "Save")
+      )
+    )
+  })
+  
+  observeEvent(input$save_new_author, {
+    tmp_author = data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F)
+    authors$data = rbind(authors$data, tmp_author)
+    removeModal()
+  })
+  
+  observeEvent(input$removePressed, {
+    row_remove = as.integer(parse_number(input$removePressed))
+    authors$data = authors$data[-row_remove,]
+  })
+  
+  observeEvent(input$editPressed, {
+    row_edit = as.integer(parse_number(input$editPressed))
+    author_edit = isolate(authors$data)[row_edit,]
+    showModal(
+      modalDialog(title = "Edit author information", footer = NULL, easyClose = T,
+                  textInput("first_name", "First name", value = author_edit[1]),
+                  textInput("last_name", "Last name", value = author_edit[2]),
+                  textInput("affiliation", "Affiliation", value = author_edit[3]),
+                  textInput("email", "Email address", value = author_edit[4]),
+                  actionButton("save_author_edits", "Save")
+      )
+    )
+  })
+  
+  observeEvent(input$save_author_edits, {
+    row_edit = as.integer(parse_number(input$editPressed))
+    authors$data[row_edit,] = c(input$first_name, input$last_name, input$affiliation, input$email)
+    removeModal()
+  })
+  
   # Study objective
   observeEvent(input$study_objective, {
     # Dynamically show/hide corresponding input fields
@@ -172,7 +243,6 @@ server <- function(input, output, session) {
   observeEvent(input$toggle_optional,{
     shinyjs::toggle(selector = paste0("#", setdiff(elem_optional, elem_hide[[input$study_objective]])), condition = !input$toggle_optional)
   })
-  
   
   #######################
   ### MARKDOWN OUTPUT ###
@@ -310,7 +380,7 @@ server <- function(input, output, session) {
       protocol_upload =  read.csv(input$upload$datapath)
       if(all(c("section", "subsection", "paragraph", "description") %in% colnames(protocol_upload)) & nrow(protocol_upload) > 0){
         UI_list[[3]] = p(paste("File:", input$upload$name))
-        UI_list[[4]] = radioButtons("replace_values", "Replace existing values?", choices = c("Yes", "No"), selected = "No")
+        UI_list[[4]] = radioButtons("replace_values", "Overwrite non-empty fields with uploaded values?", choices = c("Yes", "No"), selected = "No")
         UI_list[[5]] = actionButton("copy_to_input", "Copy to input form")
       } else {
         UI_list[[3]] = p("Invalid file")
@@ -327,7 +397,7 @@ server <- function(input, output, session) {
     
     for(i in 1:nrow(protocol_upload)){
       if(!(input[[protocol_upload$paragraph_id[i]]] != "" & input$replace_values == "No")){
-              updateTextAreaInput(session, inputId = protocol_upload$paragraph_id[i], value = protocol_upload$description[i])
+        updateTextAreaInput(session, inputId = protocol_upload$paragraph_id[i], value = protocol_upload$description[i])
       }
     }
     updateNavbarPage(session, "navbar", selected = "tab_2")

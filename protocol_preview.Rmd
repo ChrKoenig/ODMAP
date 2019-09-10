@@ -8,13 +8,11 @@ knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 
 
 ```{r, results = 'asis'}
-if(input$title == "" | input$authors == "" | input$email == "" | input$study_objective == ""){
-  cat("<b><center>Please fill out the general information form.</center></b>")
+if(input$study_objective == ""){
+  cat("<b><center>Please select a study objective.</center></b>")
 } else {
   cat("<h2><center>", input$title, "</center></h2>")
   cat("<h4><center> - ODMAP protocol - </center></h4>")
-  cat("<p>", input$authors, "</p>")
-  cat("<p>", input$email, "</p>")
   cat("<p>", as.character(Sys.Date()), "</p>")
   cat("\n", "______________", "\n")
   
