@@ -11,10 +11,13 @@ knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 if(input$study_objective == ""){
   cat("<b><center>Please select a study objective.</center></b>")
 } else {
-  cat("<h2><center>", input$title, "</center></h2>")
-  cat("<h4><center> - ODMAP protocol - </center></h4>")
-  cat("<p>", as.character(Sys.Date()), "</p>")
-  cat("\n", "______________", "\n")
+  cat("<h4><center> - ODMAP protocol - </center></h4>", sep = "")
+  cat("<h2><center>", input$study_title, "</center></h2>", sep = "")
+  cat("<p><b>Study objective:</b> ", input$study_objective, "</p>", sep = "")
+  cat("<p><b>Authors:</b> ", paste(authors$text, collapse = ", "), "</p>", sep = "")
+  cat("<p><b>DOI:</b> ", input$DOI, "</p>", sep = "")
+  cat("<p><b>Date:</b> ", as.character(Sys.Date()), "</p>", sep = "")
+  cat("\n", "______________", "\n", sep = "")
   
   section = ""
   subsection = ""

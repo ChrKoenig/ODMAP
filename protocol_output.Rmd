@@ -1,15 +1,15 @@
 ---
 output: word_document
 params: 
-    title: "Study title"
-    authors: "Authors"
-    email: "Email"
+    study_title: "Study title"
     study_objective: "Study objective"
+    authors: "Authors"
+    DOI: "DOI"
 
 subtitle: "– ODMAP Protocol –"
-title: "`r paste0(params$title)`"
+title: "`r paste0(params$study_title)`"
 author: "`r paste0(params$authors)`"
-email: "`r paste0(params$email)`"
+DOI: "`r paste0(params$DOI)`"
 date: "`r Sys.Date()`"
 ---
 

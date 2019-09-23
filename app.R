@@ -36,7 +36,7 @@ ui <- tagList(
              Despite the widespread use of SDMs, the standardisation and documentation of model protocols remains limited. To address these issues, 
              we propose a standard protocol for reporting SDMs. We call this the ODMAP (Overview, Data, Model, Assessment and Prediction) protocol
              as each of its components reflectsthe main steps involved in building SDMs and other empirically-based biodiversity models."), 
-               img(src = "www/workflow.jpg", width = 400, align = "center"),
+               img(src = "workflow.jpg", width = 400, align = "center"),
                p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach todocumentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses."),
@@ -52,7 +52,7 @@ ui <- tagList(
       sidebarPanel(
         width = 2,
         materialSwitch("toggle_optional", label = "Hide optional fields", status = "danger"),
-        radioButtons("document_format", label = "Download protocol", choices = c("doc", "csv")),
+        radioButtons("document_format", label = "Download protocol", choices = c("doc", "txt")),
         downloadButton("protocol_download")
       ),
       
@@ -68,7 +68,9 @@ ui <- tagList(
             h5("Study objective", style = "font-weight: bold"),
             selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer")),
             h5("Study title", style = "font-weight: bold"),
-            textInput("title", label = NULL),
+            textInput("study_title", label = NULL),
+            h5("DOI", style = "font-weight: bold"),
+            textInput("DOI", label = NULL),
             h5("Author(s)", style = "font-weight: bold"),
             dataTableOutput("authors_table"),
             actionButton("add_author", label = NULL, icon = icon("plus"))
@@ -124,7 +126,6 @@ ui <- tagList(
 #                                                                                                        #
 # ------------------------------------------------------------------------------------------------------ #
 #                                              DEFINE SERVER                                             #
-
 server <- function(input, output, session) {
   ####################
   ### Prepare data ###
@@ -153,20 +154,33 @@ server <- function(input, output, session) {
   ######################
   # Authors
   # Add dynamic name form
-  authors = reactiveValues()
-  authors$data = data.frame("first_name" = character(0), 
-                            "last_name" = character(0), 
-                            "affiliation" = character(0), 
-                            "email" = character(0), stringsAsFactors = F)
+  authors = reactiveValues("df" = data.frame("first_name" = character(0), 
+                                             "last_name" = character(0), 
+                                             "affiliation" = character(0), 
+                                             "email" = character(0), stringsAsFactors = F),
+                           "text" =  character(0))
   
-  output$authors_table = renderDataTable({
-    if(nrow(authors$data) == 0){
-      authors_table_render = datatable(authors$data, escape = F, rownames = F, colnames = NULL, 
+  parse_author = function(author_data){
+    if(author_data[1,3] == "" & author_data[1,4] == ""){
+      paste0(author_data[1,2], ", ", author_data[1,1], collapse = "")
+    } else if(author_data[1,3] == "") {
+      paste0(author_data[1,2], ", ", author_data[1,1], " (", author_data[1,4], ")", collapse = "")
+    } else if(author_data[1,4] == "") {
+      paste0(author_data[1,2], ", ", author_data[1,1], " (", author_data[1,3], ")", collapse = "")
+    } else {
+      paste0(author_data[1,2], ", ", author_data[1,1], " (", author_data[1,3], ", ", author_data[1,4], ")", collapse = "")
+    }
+  }
+
+  output$authors_table = DT::renderDT(server=FALSE, {
+    if(nrow(authors$df) == 0){
+      authors_table_render = datatable(authors$df, escape = F, rownames = F, colnames = NULL, 
                                        options = list(dom = "t", ordering = F, language = list(emptyTable = "Author list is empty"), columnDefs = list(list(className = 'dt-left', targets = "_all"))))
     } else {
-      authors_table = authors$data %>% 
+      authors_table = authors$df %>% 
         rownames_to_column("row_id") %>% 
-        mutate(delete = sapply(1:nrow(.), function(row_id){as.character(actionButton(inputId = paste("remove_author", row_id, sep = "_"),
+        mutate(row_id = as.numeric(row_id),
+               delete = sapply(1:nrow(.), function(row_id){as.character(actionButton(inputId = paste("remove_author", row_id, sep = "_"),
                                                                                      label = NULL, 
                                                                                      icon = icon("trash"),
                                                                                      onclick = 'Shiny.setInputValue(\"removePressed\", this.id, {priority: "event"})'))}),
@@ -174,13 +188,18 @@ server <- function(input, output, session) {
                                                                                    label = NULL, 
                                                                                    icon = icon("edit"),
                                                                                    onclick = 'Shiny.setInputValue(\"editPressed\", this.id, {priority: "event"})'))})) %>% 
-        select(-row_id)
-      authors_table_render = datatable(authors_table, escape = F, rownames = F, colnames = c("First name", "Last name", "Affiliation", "email", "", ""),
-                                       options = list(dom = "t", ordering = F, autoWidth = TRUE, columnDefs = list(list(width = '30px', targets = c(4,5)), list(className = 'dt-center', targets = "_all"))))
+        select(row_id, everything())
+      
+      authors_table_render = datatable(authors_table, escape = F, rownames = F, colnames = c("", "First name", "Last name", "Affiliation", "email", "", ""), 
+                                       extensions = 'RowReorder', selection = 'none',
+                                       list(dom = "t", autoWidth = TRUE, order = list(list(0, 'asc')), rowReorder = TRUE, 
+                                            columnDefs = list(list(width = '30px', targets = c(0,5,6)), 
+                                                              list(className = 'dt-center', targets = "_all"),
+                                                              list(orderable = F, targets = c(1:6)))))
     }
     authors_table_render
   })
-  
+
   observeEvent(input$add_author, {
     showModal(
       modalDialog(title = "Add new author", footer = NULL, easyClose = T,
@@ -194,19 +213,25 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$save_new_author, {
-    tmp_author = data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F)
-    authors$data = rbind(authors$data, tmp_author)
-    removeModal()
+    if(input$first_name == "" | input$last_name == ""){
+      showNotification("Please provide first and last name", duration = 3, type = "error")
+    } else {
+      new_author = data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F)
+      authors$df = rbind(authors$df, new_author)
+      authors$text = c(authors$text, parse_author(new_author))
+      removeModal()
+    }
   })
   
   observeEvent(input$removePressed, {
-    row_remove = as.integer(parse_number(input$removePressed))
-    authors$data = authors$data[-row_remove,]
+    item_remove = as.integer(parse_number(input$removePressed))
+    authors$df = authors$df[-item_remove,]
+    authors$text = authors$text[-item_remove]
   })
   
   observeEvent(input$editPressed, {
-    row_edit = as.integer(parse_number(input$editPressed))
-    author_edit = isolate(authors$data)[row_edit,]
+    item_edit = as.integer(parse_number(input$editPressed))
+    author_edit = isolate(authors$df)[item_edit,]
     showModal(
       modalDialog(title = "Edit author information", footer = NULL, easyClose = T,
                   textInput("first_name", "First name", value = author_edit[1]),
@@ -219,11 +244,17 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$save_author_edits, {
-    row_edit = as.integer(parse_number(input$editPressed))
-    authors$data[row_edit,] = c(input$first_name, input$last_name, input$affiliation, input$email)
-    removeModal()
+    if(input$first_name == "" | input$last_name == ""){
+      showNotification("Please provide first and last name", duration = 3, type = "error")
+    } else {
+      item_edit = as.integer(parse_number(input$editPressed))
+      authors$df[item_edit,] = c(input$first_name, input$last_name, input$affiliation, input$email)
+      authors$text[item_edit] = parse_author(data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F))
+      removeModal()
+    }
   })
-  
+                        
+  # ---------------------- End Authors -------------------------#
   # Study objective
   observeEvent(input$study_objective, {
     # Dynamically show/hide corresponding input fields
@@ -347,10 +378,28 @@ server <- function(input, output, session) {
         filter(!paragraph_id %in% elem_hide[[input$study_objective]]) %>% # use only relevent rows
         select(section, subsection, paragraph, paragraph_id)
       
-      if(input$document_format == "csv"){
+      # CREATE TXT FILES
+      if(input$document_format == "txt"){
+        # Create header
+        header = c("--------------- ODMAP PROTOCOL ---------------", 
+                   paste0("Study title: ", input$study_title, collapse = ""),
+                   paste0("Study objective: ", input$study_objective, collapse = ""),
+                   paste0("Authors: ", paste(authors$text, collapse = ", "), collapse = ""),
+                   paste0("DOI: ", input$DOI, collapse = ""),
+                   paste0("Date: ", as.character(Sys.Date()), collapse = ""),
+                   "----------------------------------------------")
+        
+        # Create table
         elem_output$description = sapply(elem_output$paragraph_id, function(x){input[[x]]})
         elem_output$paragraph_id = NULL
-        write.csv(elem_output, file, row.names = F)  
+        
+        # Write output
+        file_conn = file(file, open = "w")
+        write_lines(header, file_conn)
+        write_delim(elem_output, path = file_conn, delim = ",")
+        close(file_conn)
+        
+      # CREATE WORD FILES
       } else {
         src <- normalizePath("protocol_output.Rmd")
         
@@ -359,8 +408,8 @@ server <- function(input, output, session) {
         on.exit(setwd(owd))
         file.copy(src, "protocol_output.Rmd", overwrite = TRUE)
         report_output = rmarkdown::render("protocol_output.Rmd", rmarkdown::word_document(),
-                                          params = list(title = input$title,
-                                                        authors = input$authors))
+                                          params = list(study_title = input$study_title, study_objective = input$study_objective,
+                                                        authors =  paste(authors$text, collapse = ", "), DOI = input$DOI))
         file.rename(report_output, file)
       }
     }
@@ -372,12 +421,13 @@ server <- function(input, output, session) {
   output$Upload_UI = renderUI({
     # Basic Upload Dialog
     UI_list = list(
-      p("You can upload your previously saved ODMAP protocol (.csv-files only) and resume working in the Shiny app."),
-      fileInput("upload", "Choose file",  accept = c(".csv"))
+      p("You can upload your previously saved ODMAP protocol (.txt-files only) and resume working in the Shiny app."),
+      fileInput("upload", "Choose file",  accept = c(".txt"))
     )
     
     if(!is.null(input$upload)){
-      protocol_upload =  read.csv(input$upload$datapath)
+      
+      upload_df = read.csv(input$upload$datapath, skip = 7)
       if(all(c("section", "subsection", "paragraph", "description") %in% colnames(protocol_upload)) & nrow(protocol_upload) > 0){
         UI_list[[3]] = p(paste("File:", input$upload$name))
         UI_list[[4]] = radioButtons("replace_values", "Overwrite non-empty fields with uploaded values?", choices = c("Yes", "No"), selected = "No")
