@@ -13,7 +13,7 @@ if(input$study_objective == ""){
 } else {
   cat("<h4><center> - ODMAP protocol - </center></h4>", sep = "")
   cat("<h2><center>", input$study_title, "</center></h2>", sep = "")
-  cat("<p><b>Study objective:</b> ", input$study_objective, "</p>", sep = "")
+  cat("<p><b>Model objective:</b> ", input$study_objective, "</p>", sep = "")
   cat("<p><b>Authors:</b> ", paste(authors$text, collapse = ", "), "</p>", sep = "")
   cat("<p><b>DOI:</b> ", input$DOI, "</p>", sep = "")
   cat("<p><b>Date:</b> ", as.character(Sys.Date()), "</p>", sep = "")
@@ -38,6 +38,9 @@ if(input$study_objective == ""){
     
     # Render paragraphs
     paragraph_id = elem_input$paragraph_id[i]
+    if (i==1) {
+      knit_element_obj(paragraph_id)
+    } else
     if(paragraph_id %in% names(input)){
       if(input[[paragraph_id]] == ""){
         cat("<span style='color:#ff4c3f'>")

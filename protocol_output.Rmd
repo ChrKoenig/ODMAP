@@ -40,6 +40,9 @@ for(i in 1:nrow(elem_input)){
   
   # Render paragraphs
   paragraph_id = elem_input$paragraph_id[i]
+  if (i==1) {
+      knit_element_obj(paragraph_id)
+    } else
   if(paragraph_id %in% names(input)){
     if(input[[paragraph_id]] == ""){
       knit_element_empty(paragraph_id)

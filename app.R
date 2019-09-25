@@ -65,7 +65,7 @@ ui <- tagList(
             p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
             p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.csv-files only)."),
             hr(),
-            h5("Study objective", style = "font-weight: bold"),
+            h5("Model objective", style = "font-weight: bold"),
             selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer")),
             h5("Study title", style = "font-weight: bold"),
             textInput("study_title", label = NULL),
@@ -311,14 +311,20 @@ server <- function(input, output, session) {
   }
   
   knit_element_text = function(elem_name){
-    cat(input[[elem_name]], "  ")
+    placeholder = elem_input$paragraph[which(elem_input$paragraph_id == elem_name)]
+    cat("\n", placeholder, ": ", input[[elem_name]], "\n", sep="")
   }
   
   knit_element_empty = function(elem_name){
     if(!(elem_name %in% elem_hide[[input$study_objective]] | elem_name %in% elem_optional)){
       placeholder = elem_input$paragraph[which(elem_input$paragraph_id == elem_name)]
-      cat("\\<", placeholder, "\\>  ", sep = "")
+      cat("\n\n \\<", placeholder, "\\>  \n", sep = "")
     }
+  }
+  
+  knit_element_obj = function(elem_name){
+    placeholder = elem_input$paragraph[which(elem_input$paragraph_id == elem_name)]
+    cat("\n", placeholder, ": ", input$study_objective, "\n", sep="")
   }
   
   # Render Output
@@ -331,11 +337,19 @@ server <- function(input, output, session) {
   ####################
   # Function for rendering Shiny output
   render_section = function(section, elem_input){
-    elem_tmp = elem_input[elem_input$section == section,] 
-    section_rendered = renderUI({
-      UI_list = vector("list", nrow(elem_tmp)) 
+    elem_tmp <- elem_input[elem_input$section == section,] 
+    section_rendered <- renderUI({
+      UI_list <- vector("list", nrow(elem_tmp)-1) 
       subsection = ""
       for(i in 1:nrow(elem_tmp)){
+        if (section=='Overview' & i==1){
+          subsection = elem_tmp$subsection_id[i]
+          subsection_label = unique(elem_tmp$subsection[which(elem_tmp$subsection_id == subsection)])
+          UI_list[[i]] = list(
+            div(id = elem_tmp$subsection_id[i], h5(subsection_label, style = "font-weight: bold")),
+            textInput(inputId=elem_tmp$paragraph_id[i], label=NULL, value = input$study_objective, width = NULL, placeholder = elem_tmp$paragraph_placeholder[i])
+          )
+        } else
         if(subsection != elem_tmp$subsection_id[i]){
           subsection = elem_tmp$subsection_id[i]
           subsection_label = unique(elem_tmp$subsection[which(elem_tmp$subsection_id == subsection)])
@@ -383,7 +397,7 @@ server <- function(input, output, session) {
         # Create header
         header = c("--------------- ODMAP PROTOCOL ---------------", 
                    paste0("Study title: ", input$study_title, collapse = ""),
-                   paste0("Study objective: ", input$study_objective, collapse = ""),
+                   paste0("Model objective: ", input$study_objective, collapse = ""),
                    paste0("Authors: ", paste(authors$text, collapse = ", "), collapse = ""),
                    paste0("DOI: ", input$DOI, collapse = ""),
                    paste0("Date: ", as.character(Sys.Date()), collapse = ""),
@@ -391,6 +405,7 @@ server <- function(input, output, session) {
         
         # Create table
         elem_output$description = sapply(elem_output$paragraph_id, function(x){input[[x]]})
+        elem_output$description[[1]] = input$study_objective
         elem_output$paragraph_id = NULL
         
         # Write output
@@ -427,7 +442,7 @@ server <- function(input, output, session) {
     
     if(!is.null(input$upload)){
       
-      upload_df = read.csv(input$upload$datapath, skip = 7)
+      upload_df = read_csv(input$upload$datapath, skip = 7)
       if(all(c("section", "subsection", "paragraph", "description") %in% colnames(protocol_upload)) & nrow(protocol_upload) > 0){
         UI_list[[3]] = p(paste("File:", input$upload$name))
         UI_list[[4]] = radioButtons("replace_values", "Overwrite non-empty fields with uploaded values?", choices = c("Yes", "No"), selected = "No")
@@ -440,7 +455,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$copy_to_input, {
-    protocol_upload =  read.csv(input$upload$datapath, stringsAsFactors = F) %>% 
+    protocol_upload <-  read_csv(input$upload$datapath, skip = 7) %>% 
       left_join(elem_input, by = c("section", "subsection", "paragraph")) %>% 
       mutate(description = trimws(description)) %>% 
       filter(description != "")
@@ -450,6 +465,24 @@ server <- function(input, output, session) {
         updateTextAreaInput(session, inputId = protocol_upload$paragraph_id[i], value = protocol_upload$description[i])
       }
     }
+    
+    protocol_header <- read_delim(input$upload$datapath, skip = 1, n_max=4,delim=':',col_names=F)
+    
+    # if(!(input$study_objective != "" &input$replace_values == "No")){
+    #   if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='Model objective'),2]))) {
+    #     updateselectInput(session, inputId = "study_objective", selected = as.character(protocol_header[which(protocol_header[,1]=='Model objective'),2]), choices = list("Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
+    #   }}
+    
+    if(!(input$study_title != "" &input$replace_values == "No")){  
+      if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='Study title'),2]))) {
+        updateTextInput(session, inputId = "study_title", value = as.character(protocol_header[which(protocol_header[,1]=='Study title'),2]))
+      }}
+      
+    if(!(input$DOI != "" &input$replace_values == "No")){
+      if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='DOI'),2]))) {
+        updateTextInput(session, inputId = "DOI", value = as.character(protocol_header[which(protocol_header[,1]=='DOI'),2]))
+      }}
+    
     updateNavbarPage(session, "navbar", selected = "tab_2")
   })
 }
