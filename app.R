@@ -1,4 +1,3 @@
-#library(plyr)
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -12,7 +11,8 @@ library(tidyverse)
 ui <- tagList(
   tags$head(tags$style(
     HTML('.row {padding-top: 65px}'), # prevent overlap between navbar and content
-    HTML('.shiny-input-container:not(.shiny-input-container-inline) {width: 100%;}') # fix bug in textAreaInput
+    HTML('.shiny-input-container:not(.shiny-input-container-inline) {width: 100%;}'), # fix bug in textAreaInput
+    HTML('.shiny-notification {position: fixed; top: 30%; left: 0%; right: 84%}')
   )),
   
   navbarPage(
@@ -65,8 +65,6 @@ ui <- tagList(
             p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
             p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.csv-files only)."),
             hr(),
-            h5("Model objective", style = "font-weight: bold"),
-            selectInput("study_objective", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer")),
             h5("Study title", style = "font-weight: bold"),
             textInput("study_title", label = NULL),
             h5("DOI", style = "font-weight: bold"),
@@ -77,8 +75,7 @@ ui <- tagList(
           )),
           
           tabPanel("1. Overview", value = "Overview",  fluidPage(
-            em(p("Give a brief overview of all important parts of your study.", 
-                 style = "padding-top: 10px; font-weight: 300")),
+            em(p("Give a brief overview of all important parts of your study.", style = "padding-top: 10px; font-weight: 300")),
             uiOutput("Overview_UI")
           )),
           
@@ -130,10 +127,9 @@ server <- function(input, output, session) {
   ####################
   ### Prepare data ###
   ####################
-  elem_input = read_csv("www/elements_input.csv", skip_empty_rows = T, 
-                        col_types = c(section = col_character(), section_id = col_character(), subsection = col_character(), subsection_id = col_character(),  
-                                      paragraph = col_character(),  paragraph_id = col_character(), paragraph_placeholder = col_character(),  
-                                      optional = col_double(),  inference = col_double(),  prediction = col_double(), projection = col_double()))
+  elem_input = read_csv("www/elements_input.csv", skip_empty_rows = T, col_types = c(section = col_character(), section_id = col_character(), subsection = col_character(), subsection_id = col_character(),  
+                                                                                     paragraph = col_character(), paragraph_id = col_character(), paragraph_placeholder = col_character(),  
+                                                                                     optional = col_double(), inference = col_double(), prediction = col_double(), projection = col_double()))
   
   elem_hide = list("Inference and explanation" = c(pull(elem_input %>% filter(inference == 0), paragraph_id), # unused paragraphs
                                                    unique(pull(elem_input %>% group_by(subsection_id) %>% filter(all(inference  == 0)), subsection_id)), # unused subsections
@@ -146,7 +142,7 @@ server <- function(input, output, session) {
   elem_optional = c(pull(elem_input %>% filter(optional == 1), paragraph_id), # optional paragraphs
                     unique(pull(elem_input %>% group_by(subsection_id) %>% filter(all(optional == 1)), subsection_id))) # optional subsections)
   
-  elem_hidden = "" # temporary variables to keep track of hidden elements
+  elem_hidden = "" # keep track of hidden elements
   
   
   ######################
@@ -160,7 +156,8 @@ server <- function(input, output, session) {
                                              "email" = character(0), stringsAsFactors = F),
                            "text" =  character(0))
   
-  parse_author = function(author_data){
+  # Input fields --> character string
+  paste_author_info = function(author_data){
     if(author_data[1,3] == "" & author_data[1,4] == ""){
       paste0(author_data[1,2], ", ", author_data[1,1], collapse = "")
     } else if(author_data[1,3] == "") {
@@ -171,7 +168,28 @@ server <- function(input, output, session) {
       paste0(author_data[1,2], ", ", author_data[1,1], " (", author_data[1,3], ", ", author_data[1,4], ")", collapse = "")
     }
   }
-
+  
+  # Character string --> input fields
+  parse_author_info = function(author_text){
+    author_info = trimws(str_split(author_text, pattern = ",|\\(|\\)", simplify = T))
+    author_info = author_info[author_info != ""]
+    if(length(author_info) > 4 | length(author_info) < 2){
+      showNotification(paste("Couldn't parse author:", author_text), duration = 5, type = "warning")
+      return(NULL)
+    } else {
+      last_name = author_info[1]
+      first_name = author_info[2]
+      email = grep(author_info[-c(1:2)], pattern = "@", value = T)
+      email = ifelse(length(email) == 0, "", email)
+      affiliation = grep(author_info[-c(1:2)], pattern = "@", invert = T, value = T)
+      affiliation = ifelse(length(affiliation) == 0, "", affiliation)
+      
+      new_author = data.frame(first_name, last_name, affiliation, email, stringsAsFactors = F)
+      authors$df = rbind(authors$df, new_author)
+      authors$text = c(authors$text, paste_author_info(new_author))
+    }
+  }
+  
   output$authors_table = DT::renderDT(server=FALSE, {
     if(nrow(authors$df) == 0){
       authors_table_render = datatable(authors$df, escape = F, rownames = F, colnames = NULL, 
@@ -199,7 +217,7 @@ server <- function(input, output, session) {
     }
     authors_table_render
   })
-
+  
   observeEvent(input$add_author, {
     showModal(
       modalDialog(title = "Add new author", footer = NULL, easyClose = T,
@@ -214,11 +232,11 @@ server <- function(input, output, session) {
   
   observeEvent(input$save_new_author, {
     if(input$first_name == "" | input$last_name == ""){
-      showNotification("Please provide first and last name", duration = 3, type = "error")
+      showNotification("Please provide first and last name", duration = 3, type = "message")
     } else {
       new_author = data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F)
       authors$df = rbind(authors$df, new_author)
-      authors$text = c(authors$text, parse_author(new_author))
+      authors$text = c(authors$text, paste_author_info(new_author))
       removeModal()
     }
   })
@@ -245,25 +263,25 @@ server <- function(input, output, session) {
   
   observeEvent(input$save_author_edits, {
     if(input$first_name == "" | input$last_name == ""){
-      showNotification("Please provide first and last name", duration = 3, type = "error")
+      showNotification("Please provide first and last name", duration = 3, type = "message")
     } else {
       item_edit = as.integer(parse_number(input$editPressed))
       authors$df[item_edit,] = c(input$first_name, input$last_name, input$affiliation, input$email)
-      authors$text[item_edit] = parse_author(data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F))
+      authors$text[item_edit] = paste_author_info(data.frame(input$first_name, input$last_name, input$affiliation, input$email, stringsAsFactors = F))
       removeModal()
     }
   })
-                        
+  
   # ---------------------- End Authors -------------------------#
   # Study objective
-  observeEvent(input$study_objective, {
+  observeEvent(input$o_objective_1, {
     # Dynamically show/hide corresponding input fields
-    shinyjs::show(selector = paste0("#", setdiff(elem_hidden, elem_hide[[input$study_objective]])))
-    shinyjs::hide(selector = paste0("#", elem_hide[[input$study_objective]]))
-    elem_hidden <<- elem_hide[[input$study_objective]]
+    shinyjs::show(selector = paste0("#", setdiff(elem_hidden, elem_hide[[input$o_objective_1]])))
+    shinyjs::hide(selector = paste0("#", elem_hide[[input$o_objective_1]]))
+    elem_hidden <<- elem_hide[[input$o_objective_1]]
     
     # Show/hide Prediction tab when study objective is inference
-    if(input$study_objective == "Inference and explanation"){
+    if(input$o_objective_1 == "Inference and explanation"){
       hideTab("tabset", "Prediction")
     } else {
       showTab("tabset", "Prediction")
@@ -272,7 +290,16 @@ server <- function(input, output, session) {
   
   # Toggle optional fields
   observeEvent(input$toggle_optional,{
-    shinyjs::toggle(selector = paste0("#", setdiff(elem_optional, elem_hide[[input$study_objective]])), condition = !input$toggle_optional)
+    if(is.null(input$o_objective_1)){
+      return(NULL)
+    } else if(input$toggle_optional == T & input$o_objective_1 == ""){
+      showNotification("Please select a model objective under '1. Overview'", duration = 5, type = "message")
+      Sys.sleep(0.3)
+      updateMaterialSwitch(session, "toggle_optional", value = F)
+      updateTabsetPanel(session, "tabset", "Overview")
+    } else {
+      shinyjs::toggle(selector = paste0("#", setdiff(elem_optional, elem_hide[[input$o_objective_1]])), condition = !input$toggle_optional) 
+    }
   })
   
   #######################
@@ -291,7 +318,7 @@ server <- function(input, output, session) {
     
     # Find out whether subsection needs to be rendered at all
     # Are all paragraphs optional?
-    all_optional = all((paragraph_ids %in% elem_hide[[input$study_objective]] | paragraph_ids %in% elem_optional))
+    all_optional = all((paragraph_ids %in% elem_hide[[input$o_objective_1]] | paragraph_ids %in% elem_optional))
     
     # If not, render header
     if(!all_optional){
@@ -316,17 +343,12 @@ server <- function(input, output, session) {
   }
   
   knit_element_empty = function(elem_name){
-    if(!(elem_name %in% elem_hide[[input$study_objective]] | elem_name %in% elem_optional)){
+    if(!(elem_name %in% elem_hide[[input$o_objective_1]] | elem_name %in% elem_optional)){
       placeholder = elem_input$paragraph[which(elem_input$paragraph_id == elem_name)]
-      cat("\n\n \\<", placeholder, "\\>  \n", sep = "")
+      cat("\n\n <span style='color:#DC3522'>\\<", placeholder, "\\> </span>\n", sep = "")
     }
   }
-  
-  knit_element_obj = function(elem_name){
-    placeholder = elem_input$paragraph[which(elem_input$paragraph_id == elem_name)]
-    cat("\n", placeholder, ": ", input$study_objective, "\n", sep="")
-  }
-  
+
   # Render Output
   output$markdown = renderUI({
     includeMarkdown(knitr::knit("protocol_preview.Rmd", quiet = T))
@@ -342,26 +364,26 @@ server <- function(input, output, session) {
       UI_list <- vector("list", nrow(elem_tmp)-1) 
       subsection = ""
       for(i in 1:nrow(elem_tmp)){
-        if (section=='Overview' & i==1){
+        if (section=='Overview' & i == 1){
           subsection = elem_tmp$subsection_id[i]
           subsection_label = unique(elem_tmp$subsection[which(elem_tmp$subsection_id == subsection)])
           UI_list[[i]] = list(
             div(id = elem_tmp$subsection_id[i], h5(subsection_label, style = "font-weight: bold")),
-            textInput(inputId=elem_tmp$paragraph_id[i], label=NULL, value = input$study_objective, width = NULL, placeholder = elem_tmp$paragraph_placeholder[i])
+            selectInput("o_objective_1", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
           )
         } else
-        if(subsection != elem_tmp$subsection_id[i]){
-          subsection = elem_tmp$subsection_id[i]
-          subsection_label = unique(elem_tmp$subsection[which(elem_tmp$subsection_id == subsection)])
-          UI_list[[i]] = list(
-            div(id = elem_tmp$subsection_id[i], h5(subsection_label, style = "font-weight: bold")),
-            textAreaInput(inputId = elem_tmp$paragraph_id[i], placeholder = elem_tmp$paragraph_placeholder[i], label = NULL, resize = "vertical")
-          )
-        } else {
-          UI_list[[i]] = list(
-            textAreaInput(inputId = elem_tmp$paragraph_id[i], placeholder = elem_tmp$paragraph_placeholder[i], label = NULL, resize = "vertical")
-          )
-        }
+          if(subsection != elem_tmp$subsection_id[i]){
+            subsection = elem_tmp$subsection_id[i]
+            subsection_label = unique(elem_tmp$subsection[which(elem_tmp$subsection_id == subsection)])
+            UI_list[[i]] = list(
+              div(id = elem_tmp$subsection_id[i], h5(subsection_label, style = "font-weight: bold")),
+              textAreaInput(inputId = elem_tmp$paragraph_id[i], placeholder = elem_tmp$paragraph_placeholder[i], label = NULL, resize = "vertical")
+            )
+          } else {
+            UI_list[[i]] = list(
+              textAreaInput(inputId = elem_tmp$paragraph_id[i], placeholder = elem_tmp$paragraph_placeholder[i], label = NULL, resize = "vertical")
+            )
+          }
       }
       return(UI_list)
     })
@@ -389,7 +411,7 @@ server <- function(input, output, session) {
     },
     content = function(file){
       elem_output = elem_input %>% 
-        filter(!paragraph_id %in% elem_hide[[input$study_objective]]) %>% # use only relevent rows
+        filter(!paragraph_id %in% elem_hide[[input$o_objective_1]]) %>% # use only relevent rows
         select(section, subsection, paragraph, paragraph_id)
       
       # CREATE TXT FILES
@@ -397,15 +419,13 @@ server <- function(input, output, session) {
         # Create header
         header = c("--------------- ODMAP PROTOCOL ---------------", 
                    paste0("Study title: ", input$study_title, collapse = ""),
-                   paste0("Model objective: ", input$study_objective, collapse = ""),
-                   paste0("Authors: ", paste(authors$text, collapse = ", "), collapse = ""),
+                   paste0("Authors: ", paste(authors$text, collapse = "; "), collapse = ""),
                    paste0("DOI: ", input$DOI, collapse = ""),
                    paste0("Date: ", as.character(Sys.Date()), collapse = ""),
                    "----------------------------------------------")
         
         # Create table
         elem_output$description = sapply(elem_output$paragraph_id, function(x){input[[x]]})
-        elem_output$description[[1]] = input$study_objective
         elem_output$paragraph_id = NULL
         
         # Write output
@@ -414,7 +434,7 @@ server <- function(input, output, session) {
         write_delim(elem_output, path = file_conn, delim = ",")
         close(file_conn)
         
-      # CREATE WORD FILES
+        # CREATE WORD FILES
       } else {
         src <- normalizePath("protocol_output.Rmd")
         
@@ -423,8 +443,7 @@ server <- function(input, output, session) {
         on.exit(setwd(owd))
         file.copy(src, "protocol_output.Rmd", overwrite = TRUE)
         report_output = rmarkdown::render("protocol_output.Rmd", rmarkdown::word_document(),
-                                          params = list(study_title = input$study_title, study_objective = input$study_objective,
-                                                        authors =  paste(authors$text, collapse = ", "), DOI = input$DOI))
+                                          params = list(study_title = input$study_title, authors =  paste(authors$text, collapse = ", "), DOI = input$DOI))
         file.rename(report_output, file)
       }
     }
@@ -439,11 +458,12 @@ server <- function(input, output, session) {
       p("You can upload your previously saved ODMAP protocol (.txt-files only) and resume working in the Shiny app."),
       fileInput("upload", "Choose file",  accept = c(".txt"))
     )
-    
     if(!is.null(input$upload)){
-      
-      upload_df = read_csv(input$upload$datapath, skip = 7)
-      if(all(c("section", "subsection", "paragraph", "description") %in% colnames(protocol_upload)) & nrow(protocol_upload) > 0){
+      protocol_header = read_delim(input$upload$datapath, skip = 1, n_max = 4, delim=':', col_names = F, col_types = cols())
+      header_valid = all(protocol_header[,1] == c("Study title", "Authors", "DOI", "Date"))
+      protocol_data = read_csv(input$upload$datapath, skip = 6, col_types = cols())
+      data_valid = all(c("section", "subsection", "paragraph", "description") %in% colnames(protocol_data)) & nrow(protocol_data) > 0
+      if(header_valid & data_valid){
         UI_list[[3]] = p(paste("File:", input$upload$name))
         UI_list[[4]] = radioButtons("replace_values", "Overwrite non-empty fields with uploaded values?", choices = c("Yes", "No"), selected = "No")
         UI_list[[5]] = actionButton("copy_to_input", "Copy to input form")
@@ -455,35 +475,49 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$copy_to_input, {
-    protocol_upload <-  read_csv(input$upload$datapath, skip = 7) %>% 
+    # Fill in general information
+    protocol_header = read_delim(input$upload$datapath, skip = 1, n_max=3, delim=':', col_names = F, col_types = cols())
+    authors_upload = protocol_header[which(protocol_header[,1] == 'Authors'), 2]
+    authors_upload = trimws(str_split(authors_upload, ";", simplify = T))
+    if(!all(authors_upload == "")){
+      if(input$replace_values == "Yes"){
+        authors$df = authors$df[0,]
+        authors$text = character(0)
+      }
+      for(author in authors_upload){
+        parse_author_info(author)
+      }
+    }
+    if(!(input$study_title != "" & input$replace_values == "No")){
+      if(!is.na(as.character(protocol_header[which(protocol_header[,1] == 'Study title'),2]))) {
+        updateTextInput(session, inputId = "study_title", value = as.character(protocol_header[which(protocol_header[,1] == 'Study title'), 2]))
+      }
+    }
+    if(!(input$DOI != "" & input$replace_values == "No")){
+      if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='DOI'),2]))) {
+        updateTextInput(session, inputId = "DOI", value = as.character(protocol_header[which(protocol_header[,1] == 'DOI'), 2]))
+      }
+    }
+    
+    # Fill in ODMAP information
+    protocol_data = read_csv(input$upload$datapath, skip = 6, col_types = cols()) %>% 
       left_join(elem_input, by = c("section", "subsection", "paragraph")) %>% 
       mutate(description = trimws(description)) %>% 
       filter(description != "")
     
-    for(i in 1:nrow(protocol_upload)){
-      if(!(input[[protocol_upload$paragraph_id[i]]] != "" & input$replace_values == "No")){
-        updateTextAreaInput(session, inputId = protocol_upload$paragraph_id[i], value = protocol_upload$description[i])
+    for(i in 1:nrow(protocol_data)){
+      if(!(input[[protocol_data$paragraph_id[i]]] != "" & input$replace_values == "No")){
+        if(protocol_data$paragraph_id[i] == "o_objective_1"){
+          updateSelectInput(session, inputId = protocol_data$paragraph_id[i], label = protocol_data$description[i])
+        } else {
+           updateTextAreaInput(session, inputId = protocol_data$paragraph_id[i], value = protocol_data$description[i])
+        }
       }
     }
     
-    protocol_header <- read_delim(input$upload$datapath, skip = 1, n_max=4,delim=':',col_names=F)
-    
-    # if(!(input$study_objective != "" &input$replace_values == "No")){
-    #   if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='Model objective'),2]))) {
-    #     updateselectInput(session, inputId = "study_objective", selected = as.character(protocol_header[which(protocol_header[,1]=='Model objective'),2]), choices = list("Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
-    #   }}
-    
-    if(!(input$study_title != "" &input$replace_values == "No")){  
-      if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='Study title'),2]))) {
-        updateTextInput(session, inputId = "study_title", value = as.character(protocol_header[which(protocol_header[,1]=='Study title'),2]))
-      }}
-      
-    if(!(input$DOI != "" &input$replace_values == "No")){
-      if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='DOI'),2]))) {
-        updateTextInput(session, inputId = "DOI", value = as.character(protocol_header[which(protocol_header[,1]=='DOI'),2]))
-      }}
-    
+    # Switch to "Create a protocol" 
     updateNavbarPage(session, "navbar", selected = "tab_2")
+    reset("upload")
   })
 }
 

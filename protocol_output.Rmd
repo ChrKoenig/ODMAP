@@ -2,7 +2,6 @@
 output: word_document
 params: 
     study_title: "Study title"
-    study_objective: "Study objective"
     authors: "Authors"
     DOI: "DOI"
 
@@ -26,23 +25,20 @@ subsection = ""
 for(i in 1:nrow(elem_input)){
   # Find out if new section header needs to be rendered
   section_new = elem_input$section_id[i]
-  if(section_new != section & !(section_new %in% elem_hide[[input$study_objective]])){
+  if(section_new != section & !(section_new %in% elem_hide[[input$o_objective_1]])){
     section = section_new
     knit_section(section)
   }
   
   # Find out if new subsection header needs to be rendered
   subsection_new = elem_input$subsection_id[i]
-  if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$study_objective]])){
+  if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$o_objective_1]])){
     subsection = subsection_new
     knit_subsection(subsection)
   }
   
   # Render paragraphs
   paragraph_id = elem_input$paragraph_id[i]
-  if (i==1) {
-      knit_element_obj(paragraph_id)
-    } else
   if(paragraph_id %in% names(input)){
     if(input[[paragraph_id]] == ""){
       knit_element_empty(paragraph_id)
