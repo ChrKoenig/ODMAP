@@ -29,6 +29,7 @@ ui <- tagList(
         column(width = 2),
         column(width = 8,
                h3("What is ODMAP?"),
+               p(strong(span("This is a test version of ODMAP. The final first version of ODMAP v1.0 will be published after peer-review and acceptance of the corresponding manuscript.",style = "color:red"))),
                p("Species distribution models (SDMs) constitute the most common class of biodiversity models. The advent of ready-to-use software packages and
              increasing availability of digital geo-information have considerably assisted the application of SDMs in recent years  enabling their use in
              informing conservation and management, and quantifying impacts from global change."),
@@ -36,16 +37,19 @@ ui <- tagList(
              Despite the widespread use of SDMs, the standardisation and documentation of model protocols remains limited. To address these issues, 
              we propose a standard protocol for reporting SDMs. We call this the ODMAP (Overview, Data, Model, Assessment and Prediction) protocol
              as each of its components reflectsthe main steps involved in building SDMs and other empirically-based biodiversity models."), 
-               img(src = "workflow.jpg", width = 400, align = "center"),
+               img(src = "workflow.jpg", width = 600, align = "center"),
                p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach todocumentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses."),
-               p("This application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. For further explanation please refer to the original publication (Zurell et al., under review)."),
-               em(p("Please cite as follows:")),
-               p("Zurell D,  Franklin J,  Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, König C, Leitão PJ, Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz D, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) A standard protocol for describing species distribution models.")
-        ),
+               p("This application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. Further information can be found in the companion paper (under review)."),
+               strong(p("Citation:")),
+               p(span("The corresponding manuscript is currently under review in"),
+                 em("Ecography"), span("under the title 'A standard protocol for reporting species distribution models'.")),
+               p(strong("Help:")),
+               p(span("For technical support concerning the Shiny app please contact: "),a(href="mailto:max1@mustermann.ch","Blinded admin")),
+               p(span("For conceptual support concerning the ODMAP protocol please contact: "), a(href="mailto:max2@mustermann.ch","Blinded author")),
         column(width = 2)
-      )
+      ))
     )),
     
     tabPanel("Create a protocol", value = "tab_2", sidebarLayout(
@@ -499,16 +503,16 @@ server <- function(input, output, session) {
       }
     }
     
-    # Fill in ODMAP information
-    protocol_data = read_csv(input$upload$datapath, skip = 6, col_types = cols()) %>% 
-      left_join(elem_input, by = c("section", "subsection", "paragraph")) %>% 
-      mutate(description = trimws(description)) %>% 
+    #Fill in ODMAP information
+    protocol_data = read_csv(input$upload$datapath, skip = 6, col_types = cols()) %>%
+      left_join(elem_input, by = c("section", "subsection", "paragraph")) %>%
+      mutate(description = trimws(description)) %>%
       filter(description != "")
-    
+
     for(i in 1:nrow(protocol_data)){
       if(!(input[[protocol_data$paragraph_id[i]]] != "" & input$replace_values == "No")){
         if(protocol_data$paragraph_id[i] == "o_objective_1"){
-          updateSelectInput(session, inputId = protocol_data$paragraph_id[i], label = protocol_data$description[i])
+          updateSelectInput(session, inputId = "o_objective_1", selected = protocol_data$description[i])
         } else {
            updateTextAreaInput(session, inputId = protocol_data$paragraph_id[i], value = protocol_data$description[i])
         }
