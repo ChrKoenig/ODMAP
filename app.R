@@ -67,7 +67,7 @@ ui <- tagList(
             strong(p("How to create an ODMAP protocol", style = "padding-top: 10px")),
             p("Enter all relevant information into the fields provided in steps 0-5. The switch on the left allows you to hide optional fields and show only the mandatory fields. These will differ according to the model objective, which you can choose below."),
             p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
-            p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.csv-files only)."),
+            p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.txt-files only)."),
             hr(),
             h5("Study title", style = "font-weight: bold"),
             textInput("study_title", label = NULL),
