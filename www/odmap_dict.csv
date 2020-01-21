@@ -1,78 +1,79 @@
-new_section,section,section_id,subsection,subsection_id,paragraph,paragraph_id,paragraph_placeholder,optional,inference,prediction,projection,rmm_fields,rmm_entities,rmm_family,homology_odmap_rmm
-,Overview,o,Study title,o_title,Study title,o_title_1,Study title,,,,,authorship,,,0
-,Overview,o,Authorship,o_authorship,Author names,o_authorship_1,Author names,,,,,authorship,names,,1
-,Overview,o,Authorship,o_authorship,contact ,o_authorship_2,contact email,,,,,authorship,contact,,1
-,Overview,o,Model objective,o_objective,Model objective,o_objective_1,Model objective,0,1,1,1,studyObjective,purpose,base,0
-,Overview,o,Model objective,o_objective,Target output,o_objective_2,"Main target output: e.g., suitable vs. unsuitable habitat, continuous habitat suitability index, abundance",0,0,1,1,studyObjective,"rangeType,invasion,transfer,populationType",base,0
-data$biodiv,Overview,o,Species data overview,o_spec_dat,Observation type,o_spec_dat_2,"Observation type: e.g., standardised monitoring data, expert knowledge, citizen science, heterogenous types",0,1,1,1,,,,
-data$biodiv,Overview,o,Species data overview,o_spec_dat,Data type,o_spec_dat_3,"Data type: e.g., presence-only, presence/absence, counts, GPS locations (from individual tracking data)",0,1,1,1,,,,
-data$biodiv,Overview,o,Species data overview,o_spec_dat,Sampling design,o_spec_dat_4,"Sampling design, if applicable: e.g., random, uniform, environmentally stratified, opportunistic",0,1,1,1,,,,
-data$biodiv,Overview,o,Species data overview,o_spec_dat,Time of data collection,o_spec_dat_5,Time period of data collection,1,1,1,1,,,,
-data$biodiv,Overview,o,Species data overview,o_spec_dat,Sample size,o_spec_dat_6,Sample size (incl. prevalence),0,1,1,1,,,,
-,Overview,o,Conceptual model,o_concept,Hypotheses,o_concept_1,Hypotheses about species-environment relationships,0,1,1,1,,,,
-data$predictor,Overview,o,Conceptual model,o_concept,Predictor variables,o_concept_3,Justification of considered predictor variables and their scales,0,1,1,1,,,,
-,Overview,o,Assumptions,o_assumpt,Model assumptions,o_assumpt_1,Critical model assumptions,0,1,1,1,,,,
-model,Overview,o,Algorithms,o_algo,Modelling techniques,o_algo_1,State modelling and ensemble techniques used,0,1,1,1,,,,
-model,Overview,o,Algorithms,o_algo,Model complexity,o_algo_2,Describe model complexity,0,1,1,1,,,,
-,Overview,o,Workflow,o_workflow,Model workflow,o_workflow_1,"Conceptual description of modelling steps including model fitting, assessment and prediction",0,1,1,1,,,,
-,Overview,o,Software,o_software,Software,o_software_1,"Specify modelling platform incl. version, key packages used",0,1,1,1,,,,
-,Overview,o,Software,o_software,Codes & data,o_software_2,Specify availability of source codes and data,0,1,1,1,,,,
-,Data,d,Scale of Analysis,d_scale,Spatial extent,d_scale_1,Spatial extent,0,1,1,1,,,,
-,Data,d,Scale of Analysis,d_scale,Clipping,d_scale_2,"Country/region mask, if applicable",1,1,1,1,,,,
-,Data,d,Scale of Analysis,d_scale,Spatial resolution,d_scale_3,Spatial resolution,0,1,1,1,,,,
-,Data,d,Scale of Analysis,d_scale,Temporal extent,d_scale_4,Temporal extent,0,1,1,1,,,,
-,Data,d,Scale of Analysis,d_scale,Temporal resolution,d_scale_5,"Temporal resolution, if applicable",1,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Taxon names,o_bio_dat_1,"Taxon names: e.g., names of subspecies, species, genus, families",0,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Ecological level,o_bio_dat_2,"Ecological level: e.g., operational taxonomic units, individuals, populations, species, communities",0,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Location and Study area,o_bio_dat_3,Location and extent of study area,0,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Data sources,o_bio_dat_4,"Data source: e.g., own field data or data from external provider",0,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Data sources,o_bio_dat_5,"Details on external species data source: e.g., URL/DOI, accession date, database version",1,1,1,1,data$occurrence,sources,,1
-,Data,d,Biodiversity data,d_bio_dat,Taxonomic reference system,o_bio_dat_6,Details on taxonomic reference system,0,1,1,1,dataPrep$biological$taxonomicHarmonization,"rule, notes",,1
-,Data,d,Biodiversity data,d_bio_dat,Observation type,o_bio_dat_7,"Details on observation type, if applicable: e.g., standardised monitoring data, expert knowledge, citizen science, heterogenous types",1,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Sampling design,o_bio_dat_8,"Details on spatial and temporal sampling design, temporal replications, nestedness",1,1,1,1,,,,
-,Data,d,Biodiversity data,d_bio_dat,Sample size,o_bio_dat_9,"Details on sample size per taxon: e.g., number of observations/counts, prevalence",0,1,1,1,data$occurrence,presenceSampleSize,,1
-,Data,d,Biodiversity data,d_bio_dat,Absence data,o_bio_dat_10,"Details on absence data collection, if applicable",0,1,1,1,data$occurrence,absenceSampleSize,,0
-,Data,d,Biodiversity data,d_bio_dat,Background data,o_bio_dat_11,"Details on background data derivation, if applicable: e.g., spatial and temporal extent, spatial and temporal buffer, bias correction (e.g. target group sampling)",0,1,1,1,data$occurrence,"backgroundSampleSizeSet,backgroundSampleSizeRule",,0
-,Data,d,Biodiversity data,d_bio_dat,Errors and biases,o_bio_dat_12,"Details on potential errors and biases in data, if applicable: e.g., detection probability, misidentification potential, geo-referencing errors, sampling bias",1,1,1,1,data$occurrence,spatialAccuracy,,
-,Data,d,Biodiversity data,d_bio_dat,Cleaning,o_bio_dat_13,"Details on data cleaning/filtering steps, if applicable: e.g., taxonomically, spatially, temporally, outlier presence/treatment",1,1,1,1,"dataPrep$biological$duplicateRemoval,dataPrep$biological$questionablePointRemoval,dataPrep$biological$cultivatedRemoval,dataPrep$biological$nonNativeRemoval,dataPrep$geographic$geographicalOutlierRemoval, dataPrep$geographic$centroidRemoval,dataPrep$geographic$pointInPolygon,dataPrep$geographic$altitudeRemoval.","rule,notes",,0
-,Data,d,Biodiversity data,d_bio_dat,Scaling,o_bio_dat_14,"Details on scaling, if applicable: e.g., rasterisation of polygon maps, spatial and temporal thinning, measures to address spatial uncertainties",1,1,1,1,dataPrep$geographic$spatialThin,"rule,notes",,0
-,Data,d,Data partitioning,d_part,Training data,d_part_1,Selection of training data (for model fitting),0,0,1,1,,,,
-,Data,d,Data partitioning,d_part,Validation data,d_part_2,"Selection of validation data (withheld from model fitting, used for estimating prediction error for model selection, model averaging or ensemble): e.g., cross-validation method",0,0,1,1,,,,
-,Data,d,Data partitioning,d_part,Test data,d_part_3,"Selection of test (truly independent) data , sensu Hastie, et al. (2009)",1,0,1,1,,,,
-,Data,d,Predictor variables,d_pred_dat,Data sources,d_pred_dat_1,"Details on data sources: e.g., URL/DOI, accession date, database version",0,1,1,1,data$environment,sources,,1
-,Data,d,Predictor variables,d_pred_dat,Errors and biases,d_pred_dat_2,"Details on measurements errors and bias, when known",1,1,1,1,dataPrep$environmental$environmentalOutlierRemoval,"rule,notes",,
-,Data,d,Predictor variables,d_pred_dat,Spatiotemporal scale,d_pred_dat_3,Spatial and temporal resolution and extent,0,1,1,1,data$environment,"yearMin,yearMax,extentSet,extentRule,resolution,projection",,0
-,Data,d,Predictor variables,d_pred_dat,Data processing,d_pred_dat_4,"Details on data processing and on spatial, temporal and thematic scaling: e.g. upscaling/downscaling, transformations, normalisations, thematic aggregations, addressing spatial uncertainties",1,1,1,1,,,,
-,Data,d,Predictor variables,d_pred_dat,Data processing,d_pred_dat_5,"Details on dimension reduction of variable set, if applicable - if model-based, this should be contained in Model section (element: Details on pre-selection of variables)",1,1,1,1,,,,
-,Data,d,Transfer data,d_proj_dat,Data sources,d_proj_dat_1,"Details on data sources: e.g., URL/DOI, accession date, database version",0,0,0,1,data$transfer$environment1,sources,,1
-,Data,d,Transfer data,d_proj_dat,Models and scenarios,d_proj_dat_2,Models and scenarios used,0,0,0,1,,,,
-,Data,d,Transfer data,d_proj_dat,Spatiotemporal scale,d_proj_dat_3,Spatial and temporal resolution and extent,0,0,0,1,data$transfer$environment1,"yearMin,yearMax,extentSet,extentRule,resolution",,
-,Data,d,Transfer data,d_proj_dat,Data processing,d_proj_dat_4,Details on data processing and scaling (see section Predictor variables),1,0,0,1,,,,
-,Data,d,Transfer data,d_proj_dat,Quantification of Novelty,d_proj_dat_5,"Quantification of novel environmental conditions and novel environmental combinations: e.g., distance to training data",0,0,0,1,,,,
-,Model,m,Multicollinearity,m_multicol,Multicollinearity,m_multicol_1,"Methods for identifying and dealing with multicollinearity (Dormann, et al. 2013) or justification if multicollinearity is not explicitly dealt with",0,1,1,1,,,,
-,Model,m,Variable pre-selection,m_pre_select,Variable pre-selection,m_pre_select_1,"Details on pre-selection of variables, if applicable",1,1,1,1,,,,
-,Model,m,Model complexity and model settings,m_complex,Model complexity,m_complex_1,Details on model complexity and model settings for all selected algorithms (including default settings of specific platforms/packages),0,1,1,1,,,,
-,Model,m,Model complexity and model settings,m_complex,Weighting,m_complex_2,Weighting of data,0,1,1,1,,,,
-,Model,m,Model complexity and model settings,m_complex,Extrapolation,m_complex_3,"Details on relevant model settings for extrapolation beyond sample range, if applicable: e.g., clamping",0,0,0,1,prediction$transfer,extrapolation,,
-,Model,m,Model estimates,m_estim,Model estimates,m_estim_1,Model coefficients,0,1,1,1,,,,
-,Model,m,Model estimates,m_estim,Model estimates,m_estim_2,Variable importance,1,1,1,1,,,,
-,Model,m,Model estimates,m_estim,Model estimates,m_estim_3,"Details on quantification of parameter uncertainty, e.g. resampling",1,1,1,1,,,,
-,Model,m,Model selection - model averaging - ensembles,m_selection,Model selection,m_selection_1,"Details on model selection strategy: e.g. information-theoretic approach for variable selection, shrinkage and regularization",1,1,1,1,,,,
-,Model,m,Model selection - model averaging - ensembles,m_selection,Model averaging,m_selection_2,Details on model averaging: e.g. derivation of weights,1,1,1,1,,,,
-,Model,m,Model selection - model averaging - ensembles,m_selection,Model ensembles,m_selection_3,Details on ensemble method: e.g. initial conditions (input data),1,1,1,1,model$ensemble,"weighting, ensembleRule",,
-,Model,m,Analysis and Correction of non-independence,m_depend,Spatial autocorrelation,m_depend_1,Method for addressing spatial autocorrelation in residuals,0,1,1,1,,,,
-,Model,m,Analysis and Correction of non-independence,m_depend,Temporal autocorrelation,m_depend_2,Method for addressing temporal autocorrelation in residuals,1,1,1,1,,,,
-,Model,m,Analysis and Correction of non-independence,m_depend,Nested data,m_depend_3,"Method to account for nested data: e.g., fixed and random effects",1,1,1,1,,,,
-,Model,m,Threshold selection,m_threshold,Threshold selection,m_threshold_1,"Details on threshold selection, if applicable: transforming continuous predictions into binary predictions",0,0,1,1,,,,
-,Assessment,a,Performance statistics,a_perform,Performance on training data,a_perform_1,Performance statistics estimated on training data,0,1,1,1,,,,
-,Assessment,a,Performance statistics,a_perform,Performance on validation data,a_perform_2,Performance statistics estimated on validation data (from data partitioning),0,0,1,1,,,,
-,Assessment,a,Performance statistics,a_perform,Performance on test data,a_perform_3,"Performance statistics estimated on test (truly independent) data, if applicable",0,0,1,1,,,,
-,Assessment,a,Response shapes,a_response,Response shapes,a_response_1,"Plausibility check: e.g., partial response plots, evaluation strips, inflated response plots",0,1,1,1,,,,
-,Prediction,p,Prediction output,p_out,Prediction unit,p_out_1,Prediction unit,0,0,1,1,,,,
-,Prediction,p,Prediction output,p_out,Post-processing,p_out_2,"Post-processing, e.g. clipping, reprojection",1,0,1,1,,,,
-,Prediction,p,Uncertainty quantification,p_uncert,Algorithmic uncertainty,p_uncert_1,"Algorithmic uncertainity, if applicable",1,0,1,1,prediction$uncertainty,algorithmic,NA,
-,Prediction,p,Uncertainty quantification,p_uncert,Input data uncertainty,p_uncert_2,"Uncertainty in input data, if applicable",1,0,1,1,prediction$uncertainty,inputData,NA,
-,Prediction,p,Uncertainty quantification,p_uncert,Error propagation,p_uncert_3,"Error propagation in Hierarchical/Bayesian models, if applicable",1,0,1,1,,,,
-,Prediction,p,Uncertainty quantification,p_uncert,Scenario uncertainty,p_uncert_5,"Uncertainty in scenarios (e.g. climate models, land use models, storylines)",0,0,1,1,prediction$uncertainty,scenario,NA,
-,Prediction,p,Uncertainty quantification,p_uncert,Novel environments,p_uncert_6,"Treatment of novel environments: e.g., masking",0,0,1,1,,,,
-,Prediction,p,Map display,p_map,Plausibility check,p_map_1,Plausibility check,1,0,1,1,assessment,expertJudgement,,
+running_number,section,section_id,subsection,subsection_id,paragraph,paragraph_id,paragraph_placeholder,paragraph_type,suggestions,optional,inference,prediction,projection,rmm_fields,rmm_entities,rmm_family,homology_odmap_rmm
+1,Overview,o,Study title,o_title,Study title,o_title_1,Study title,text,,0,1,1,1,,,,
+1,Overview,o,Authorship,o_authorship,Author names,o_authorship_1,Author names,text,,0,1,1,1,authorship,names,base,1
+2,Overview,o,Authorship,o_authorship,Contact ,o_authorship_2,contact email address,text,,0,1,1,1,authorship,contact,base,1
+1,Overview,o,Model objective,o_objective,Model objective,o_objective_1,Model objective,objective,,0,1,1,1,studyObjective,purpose,base,0
+2,Overview,o,Model objective,o_objective,Target output,o_objective_2,"Main target output: e.g., suitable vs. unsuitable habitat, continuous habitat suitability index, abundance",text,,0,0,1,1,studyObjective,"rangeType,invasion,transfer,populationType",base,0
+1,Overview,o,Focal Taxon,o_taxon,Focal Taxon,o_taxon_1,Focal taxon,text,,,,,,,,,
+1,Overview,o,Location,o_location,Location,o_location_1,Location or focal area,text,,,,,,,,,
+1,Overview,o,Hyptheses,o_concept,Hypotheses,o_concept_1,Hypotheses about species-environment relationships,text,,0,1,1,1,studyObjective,hypotheses,,1
+1,Overview,o,Assumptions,o_assumptions,Model assumptions,o_assumptions_1,Critical model assumptions,text,,0,1,1,1,,,,
+1,Overview,o,Workflow,o_workflow,Model workflow,o_workflow_1,"Conceptual description of modelling steps including model fitting, assessment and prediction",text,,0,1,1,1,,,,
+1,Overview,o,Software,o_software,Software,o_software_1,Specify modelling platform incl. version and key packages used,text,,0,1,1,1,code$software,"platform,packages",base,1
+2,Overview,o,Software,o_software,Codes & data,o_software_2,Specify availability of source codes and data,text,,0,1,1,1,code,"demoCodeLink,vignetteCodeLink,fullCodeLink,demoDataLink,vignetteDataLink,fullDataLink",base,1
+1,Data,d,Biodiversity data,d_bio,Taxon names,d_bio_1,"Taxon names: e.g., names of subspecies, species, genus, families",text,,0,1,1,1,data$occurrence,taxon,base,1
+2,Data,d,Biodiversity data,d_bio,Ecological level,d_bio_2,"Ecological level: e.g. species, communities, operational taxonomic units, individuals, populations",suggestion,"species,individuals,communities,opterational taxonomic units,populations",0,1,1,1,,,,
+3,Data,d,Biodiversity data,d_bio,Taxonomic reference system,d_bio_3,Details on taxonomic reference system,text,,0,1,1,1,dataPrep$biological$taxonomicHarmonization,"rule, notes",dataPrep,1
+4,Data,d,Biodiversity data,d_bio,Data sources,d_bio_4,"Details on species data source: e.g., URL/DOI, accession date, database version",text,,0,1,1,1,data$occurrence,sources,base,1
+5,Data,d,Biodiversity data,d_bio,Data type,d_bio_5,"Data type: e.g., presence-only, presence/absence, counts, GPS locations (from individual tracking data)",suggestion,"presence-only, presence/absence, counts, GPS locations,",0,1,1,1,data$occurrence,dataType,base,1
+6,Data,d,Biodiversity data,d_bio,Observation type,d_bio_6,"Observation type, if applicable: e.g., standardised monitoring data, expert knowledge, citizen science, heterogenous types",suggestion,"standardised monitoring, citizen science, expert knowledge, heterogenous types",0,1,1,1,,,,
+7,Data,d,Biodiversity data,d_bio,Sampling design,d_bio_7,"Sampling design, if applicable: e.g., random, uniform, environmentally stratified, opportunistic, replications",suggestion,"random, uniform, environmentally stratified, opportunistic, replications",0,1,1,1,,,,
+8,Data,d,Biodiversity data,d_bio,Sample size,d_bio_8,"Sample size per taxon (incl. prevalence): e.g., number of observations/counts, prevalence",text,,0,1,1,1,data$occurrence,presenceSampleSize,,1
+9,Data,d,Biodiversity data,d_bio,Spatial extent,d_bio_9,Spatial extent of raw data,extent,,0,1,1,1,,,,
+10,Data,d,Biodiversity data,d_bio,Spatial resolution,d_bio_10,Spatial resolution biodiversity data ,text,,1,1,1,1,,,,
+11,Data,d,Biodiversity data,d_bio,Temporal extent,d_bio_11,Temporal extent of raw data,text,,0,1,1,1,data$occurrence,"yearMin,yearMax",base,1
+12,Data,d,Biodiversity data,d_bio,Temporal resolution,d_bio_12,"Temporal resolution of raw data, if applicable",text,,1,1,1,1,,,,
+13,Data,d,Biodiversity data,d_bio,Clipping,d_bio_13,"Country/region mask, if applicable",text,,1,1,1,1,,,,
+14,Data,d,Biodiversity data,d_bio,Scaling,d_bio_14,"Details on scaling, if applicable: e.g., rasterisation of polygon maps, spatial and temporal thinning, measures to address spatial uncertainties",text,,1,1,1,1,dataPrep$geographic$spatialThin,"rule,notes",dataPrep,0
+15,Data,d,Biodiversity data,d_bio,Absence data,d_bio_15,"Details on absence data collection, if applicable",text,,0,1,1,1,data$occurrence,absenceSampleSize,"occurrence, pa",0
+16,Data,d,Biodiversity data,d_bio,Background data,d_bio_16,"Details on background data derivation, if applicable: e.g., spatial and temporal extent, spatial and temporal buffer, bias correction (e.g. target group sampling)",text,,0,1,1,1,data$occurrence,"backgroundSampleSizeSet,backgroundSampleSizeRule","occurrence, po",0
+17,Data,d,Biodiversity data,d_bio,Errors and biases,d_bio_17,"Details on potential errors and biases in data, if applicable: e.g., detection probability, misidentification potential, geo-referencing errors, sampling bias",text,,1,1,1,1,data$occurrence,spatialAccuracy,"occurrence, po",0
+18,Data,d,Biodiversity data,d_bio,Cleaning,d_bio_18,"Details on data cleaning/filtering steps, if applicable: e.g., taxonomically, spatially, temporally, outlier presence/treatment",text,,1,1,1,1,"dataPrep$biological$duplicateRemoval,dataPrep$biological$questionablePointRemoval,dataPrep$biological$cultivatedRemoval,dataPrep$biological$nonNativeRemoval,dataPrep$geographic$geographicalOutlierRemoval, dataPrep$geographic$centroidRemoval,dataPrep$geographic$pointInPolygon,dataPrep$geographic$altitudeRemoval.","rule,notes",dataPrep,0
+1,Data,d,Data partitioning,d_part,Training data,d_part_1,Selection of training data (for model fitting),text,,0,0,1,1,,,,
+2,Data,d,Data partitioning,d_part,Validation data,d_part_2,"Selection of validation data (withheld from model fitting, used for estimating prediction error for model selection, model averaging or ensemble): e.g., cross-validation method",text,,0,0,1,1,,,,
+3,Data,d,Data partitioning,d_part,Test data,d_part_3,"Selection of test (truly independent) data , sensu Hastie, et al. (2009)",text,,1,0,1,1,,,,
+1,Data,d,Predictor variables,d_pred,Predictor variables,d_pred_1,State predictor variables used,text,,0,1,1,1,data$environment,variableNames,base,1
+2,Data,d,Predictor variables,d_pred,Data sources,d_pred_2,"Details on data sources: e.g., URL/DOI, accession date, database version",text,,0,1,1,1,data$environment,sources,base,1
+3,Data,d,Predictor variables,d_pred,Spatial extent,d_pred_3,Spatial extent of raw data,extent,,0,1,1,1,data$environment,"extentSet,extentSet",base,0
+4,Data,d,Predictor variables,d_pred,Spatial resolution,d_pred_4,Spatial resolution of raw data,text,,0,1,1,1,data$environment,resolution,base,1
+5,Data,d,Predictor variables,d_pred,Temporal extent,d_pred_5,Temporal extent of raw data,text,,0,1,1,1,data$environment,"yearMin,yearMax",base,0
+6,Data,d,Predictor variables,d_pred,Temporal resolution,d_pred_6,"Temporal resolution of raw data, if applicable",text,,1,1,1,1,,,,
+7,Data,d,Predictor variables,d_pred,Data processing,d_pred_7,"Details on data processing and on spatial, temporal and thematic scaling: e.g. upscaling/downscaling, transformations, normalisations, thematic aggregations, addressing spatial uncertainties",text,,1,1,1,1,,,,
+8,Data,d,Predictor variables,d_pred,Errors and biases,d_pred_8,"Details on measurements errors and bias, when known",text,,1,1,1,1,dataPrep$environmental$environmentalOutlierRemoval,"rule,notes",dataPrep,0
+9,Data,d,Predictor variables,d_pred,Dimension reduction,d_pred_9,"Details on dimension reduction of variable set, if applicable - if model-based, this should be contained in Model section (element: Details on pre-selection of variables)",text,,1,1,1,1,,,,
+1,Data,d,Transfer data,d_proj,Data sources,d_proj_1,"Details on data sources: e.g., URL/DOI, accession date, database version",text,,0,0,0,1,data$transfer$environment1,sources,transferEnv1,1
+2,Data,d,Transfer data,d_proj,Spatial extent,d_proj_2,Spatial extent of transfer data,extent,,0,1,1,1,data$transfer$environment1,"extentSet,extentSet",transferEnv1,0
+3,Data,d,Transfer data,d_proj,Spatial resolution,d_proj_3,Spatial resolution of transfer data,text,,0,1,1,1,data$transfer$environment1,resolution,transferEnv1,1
+4,Data,d,Transfer data,d_proj,Temporal extent,d_proj_4,Temporal extent of transfer data,text,,0,1,1,1,data$transfer$environment1,"yearMin,yearMax",transferEnv1,0
+5,Data,d,Transfer data,d_proj,Temporal resolution,d_proj_5,"Temporal resolution of transfer data, if applicable",text,,1,1,1,1,,,,
+6,Data,d,Transfer data,d_proj,Models and scenarios,d_proj_6,Models and scenarios used,text,,0,0,0,1,,,,
+7,Data,d,Transfer data,d_proj,Data processing,d_proj_7,Details on data processing and scaling (see section Predictor variables),text,,1,0,0,1,,,,
+8,Data,d,Transfer data,d_proj,Quantification of Novelty,d_proj_8,"Quantification of novel environmental conditions and novel environmental combinations: e.g., distance to training data",text,,0,0,0,1,,,,
+1,Model,m,Algorithms,m_algorithms,Modelling techniques,m_algorithms_1,State modelling and ensemble techniques used,model_algorithm,,0,1,1,1,,,,
+1,Model,m,Model complexity and model settings,m_settings,Model settings (fitting),m_settings_1,Model settings for all selected algorithms (including default settings of specific platforms/packages),model_setting,,0,1,1,1,,,,
+2,Model,m,Model complexity and model settings,m_settings,Model settings (extrapolation),m_settings_2,"Model settings for extrapolation beyond sample range, if applicable: e.g., clamping",text,,0,0,0,1,prediction$transfer$environment1,extrapolation,base,1
+1,Model,m,Variable pre-selection,m_preselect,Variable pre-selection,m_preselect_1,"Details on pre-selection of variables, if applicable",text,,1,1,1,1,,,,
+1,Model,m,Multicollinearity,m_multicol,Multicollinearity,m_multicol_1,"Methods for identifying and dealing with multicollinearity (Dormann, et al. 2013) or justification if multicollinearity is not explicitly dealt with",text,,0,1,1,1,,,,
+1,Model,m,Model complexity and model settings,m_complex,Model complexity,m_complex_1,Justification of model complexity,text,,0,1,1,1,,,,
+1,Model,m,Model estimates,m_estim,Coefficients,m_estim_1,"Assessment of model coefficients, e.g. median or mean posterior",text,,0,1,1,1,,,,
+2,Model,m,Model estimates,m_estim,Parameter uncertainty,m_estim_2,"Details on quantification of parameter uncertainty, e.g. resampling",text,,1,1,1,1,model$resampling,"resamplingRule,notes",NULL,0
+3,Model,m,Model estimates,m_estim,Variable importance,m_estim_3,Assessment of variable importance,text,,1,1,1,1,,,,
+1,Model,m,Model selection - model averaging - ensembles,m_selection,Model selection,m_selection_1,"Model selection strategy: e.g. information-theoretic approach for variable selection, shrinkage and regularization",text,,1,1,1,1,model,selectionRules,base,1
+2,Model,m,Model selection - model averaging - ensembles,m_selection,Model averaging,m_selection_2,Details on model averaging: e.g. derivation of weights,text,,1,1,1,1,,,,
+3,Model,m,Model selection - model averaging - ensembles,m_selection,Model ensembles,m_selection_3,"Details on ensemble method: e.g. initial conditions (input data), model classes, model parameters, boundary conditions",text,,1,1,1,1,model$ensemble,"weighting, ensembleRule",ensemble,0
+1,Model,m,Analysis and Correction of non-independence,m_depend,Spatial autocorrelation,m_depend_1,Method for addressing spatial autocorrelation in residuals,text,,0,1,1,1,,,,
+2,Model,m,Analysis and Correction of non-independence,m_depend,Temporal autocorrelation,m_depend_2,Method for addressing temporal autocorrelation in residuals,text,,1,1,1,1,,,,
+3,Model,m,Analysis and Correction of non-independence,m_depend,Nested data,m_depend_3,"Method to account for nested data: e.g., fixed and random effects",text,,1,1,1,1,,,,
+1,Model,m,Threshold selection,m_threshold,Threshold selection,m_threshold_1,"Details on threshold selection, if applicable: transforming continuous predictions into binary predictions",text,,0,0,1,1,prediction$binary,"thresholdSet,thresholdRule",base,1
+1,Assessment,a,Performance statistics,a_perform,Performance on training data,a_perform_1,Performance statistics estimated on training data,suggestion,"AUC,AIC,BIC,DIC,Kappa,TSS,False positive rate, True positive rate, False negative rate, True negative rate",0,1,1,1,assessment$trainingDataStats,metric,,1
+2,Assessment,a,Performance statistics,a_perform,Performance on validation data,a_perform_2,Performance statistics estimated on validation data (from data partitioning),suggestion,"AUC,AUC difference,AIC,BIC,DIC,Kappa,TSS,False positive rate,True positive rate,False negative rate,True negative rate",0,0,1,1,assessment$testingDataStats,metric,,1
+3,Assessment,a,Performance statistics,a_perform,Performance on test data,a_perform_3,"Performance statistics estimated on test (truly independent) data, if applicable",suggestion,"AUC,AUC difference,AIC,BIC,DIC,Kappa,TSS,False positive rate,True positive rate,False negative rate,True negative rate",0,0,1,1,assessment$evaluationDataStats,metric,,1
+1,Assessment,a,Plausibility check,a_plausibility,Response shapes,a_plausibility_1,"Plausibility check: e.g. partial response plots, evaluation strips, inflated response plots",text,,0,1,1,1,,,,
+2,Assessment,a,Plausibility check,a_plausibility,Expert judgement,a_plausibility_2,"Expert judgement, e.g. map display, expert validation",text,,0,0,1,1,assessment,expertJudgemnet,,0
+1,Prediction,p,Prediction output,p_output,Prediction unit,p_output_1,Prediction unit,text,,0,0,1,1,prediction$continuous,units,prediction,0
+2,Prediction,p,Prediction output,p_output,Post-processing,p_output_2,"Post-processing, e.g. clipping, reprojection",text,,1,0,1,1,,,,
+1,Prediction,p,Uncertainty quantification,p_uncertainty,Algorithmic uncertainty,p_uncertainty_1,"Algorithmic uncertainity, if applicable",text,,1,0,1,1,prediction$uncertainty,algorithmic,,1
+2,Prediction,p,Uncertainty quantification,p_uncertainty,Input data uncertainty,p_uncertainty_2,"Uncertainty in input data, if applicable",text,,1,0,1,1,prediction$uncertainty,inputData,,1
+3,Prediction,p,Uncertainty quantification,p_uncertainty,Error propagation,p_uncertainty_3,"Error propagation in Hierarchical/Bayesian models, if applicable",text,,1,0,1,1,,,,
+4,Prediction,p,Uncertainty quantification,p_uncertainty,Scenario uncertainty,p_uncertainty_4,"Uncertainty in scenarios (e.g. climate models, land use models, storylines)",text,,0,0,0,1,prediction$uncertainty,scenario,,1
+5,Prediction,p,Uncertainty quantification,p_uncertainty,Novel environments,p_uncertainty_5,"Visualization/treatment of novel environments: e.g., masking",text,,0,0,0,1,,,,

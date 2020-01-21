@@ -1,6 +1,148 @@
 source("./global.R")
 
 server <- function(input, output, session) {
+  # ------------------------------------------------------------------------------------------#
+  #                           Rendering functions for UI elements                             # 
+  # ------------------------------------------------------------------------------------------#
+  render_text = function(paragraph_id, paragraph_placeholder){
+    textAreaInput(inputId = paragraph_id, placeholder = paragraph_placeholder, label = NULL, resize = "vertical", height = 45)
+  }
+  
+  render_objective = function(){
+    selectInput(inputId = "o_objective_1", label = NULL, selected = NULL, multiple = F, choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
+  }
+  
+  render_suggestion = function(paragraph_id, paragraph_placeholder, suggestions){
+    suggestions = trimws(unlist(str_split(suggestions, ",")))
+    selectizeInput(inputId = paragraph_id, label = NULL, choices = suggestions, multiple = TRUE, options = list(create = T, placeholder = paragraph_placeholder))
+  }
+  
+  render_extent = function(paragraph_id){
+    fluidRow(
+      div(
+        splitLayout(
+          cellWidths = "20%",
+          numericInput(inputId = paste0(paragraph_id, "_xmin"), value = NULL, label = "xmin"),
+          numericInput(inputId = paste0(paragraph_id, "_xmax"), value = NULL, label = "xmax"),
+          numericInput(inputId = paste0(paragraph_id, "_ymin"), value = NULL, label = "ymin"),
+          numericInput(inputId = paste0(paragraph_id, "_ymax"), value = NULL, label = "ymax")
+        )
+      )
+    )
+  }
+  
+  render_model_algorithm = function(){
+    suggestions = rmm_dict %>% filter(field1 == "model" & field2 == "algorithm") %>% pull(field3) %>% unique() %>% trimws()
+    selectizeInput(inputId = "m_algorithms_1", label = NULL, choices = suggestions, multiple = TRUE, options = list(create = T))
+  }
+  
+  render_model_settings_tabPanel = function(model_algorithm){
+    settings_tmp = rmm_dict %>%
+      filter(field1 == "model" & field2 == "algorithm" & field3 == model_algorithm) %>%
+      select(setting = entity) %>%
+      mutate(value = as.character(NA)) %>% 
+      rhandsontable(readOnly = F)
+    
+    tabPanel(title = model_algorithm, value = NULL, renderRHandsontable(settings_tmp), br())
+  }
+  
+  render_model_settings = function(){
+    renderUI({
+      tabs = lapply(input$m_algorithms_1, render_model_settings_tabPanel)
+      do.call(tabsetPanel, tabs)
+    })
+  }
+  
+  render_section = function(section, odmap_dict){
+    section_dict = filter(odmap_dict, section == !!section) 
+    section_rendered = renderUI({
+      section_UI_list = vector("list", nrow(section_dict)) # holds UI elements for all ODMAP paragraphs belonging to 'section'
+      subsection = ""
+      for(i in 1:nrow(section_dict)){
+        paragraph_UI_list = vector("list", 3) # holds UI elements for current paragraph 
+        
+        # First element: Header 
+        if(subsection != section_dict$subsection_id[i]){
+          subsection = section_dict$subsection_id[i]
+          subsection_label = section_dict$subsection[i]
+          paragraph_UI_list[[1]] = div(id = section_dict$subsection_id[i], h5(subsection_label, style = "font-weight: bold"))
+        }
+        
+        # Second element: Input field(s) 
+        paragraph_UI_list[[2]] = switch(section_dict$paragraph_type[i],
+                                        text = render_text(section_dict$paragraph_id[i], section_dict$paragraph_placeholder[i]),
+                                        objective = render_objective(),
+                                        suggestion = render_suggestion(section_dict$paragraph_id[i], section_dict$paragraph_placeholder[i], section_dict$suggestions[i]),
+                                        extent = render_extent(section_dict$paragraph_id[i]),
+                                        model_algorithm = render_model_algorithm(),
+                                        model_setting = render_model_settings())
+        
+        # Third element: Next/previous button
+        if(i == nrow(section_dict)){
+          # TODO add next/previous buttons
+        }
+        
+        # Reduce list to non-empty elements
+        paragraph_UI_list = Filter(Negate(is.null), paragraph_UI_list)
+        section_UI_list[[i]] = paragraph_UI_list
+      }
+      return(section_UI_list)
+    })
+    return(section_rendered)
+  }
+  
+  # -------------------------------------------------------------------------------------------
+  #                            Rendering functions for Markdown Output                        # 
+  # ------------------------------------------------------------------------------------------#
+  # Functions for dynamically knitting text elements
+  knit_section= function(section_id){
+    section = unique(odmap_dict$section[which(odmap_dict$section_id == section_id)])
+    cat("\n\n##", section, "\n")
+  }
+  
+  knit_subsection= function(subsection_id){
+    # Get all paragraphs
+    paragraph_ids = odmap_dict$paragraph_id[which(odmap_dict$subsection_id == subsection_id)]
+    subsection = unique(odmap_dict$subsection[which(odmap_dict$subsection_id == subsection_id)])
+    
+    # Find out whether subsection needs to be rendered at all
+    # Are all paragraphs optional?
+    all_optional = all((paragraph_ids %in% elem_hide[[input$o_objective_1]] | paragraph_ids %in% elem_optional))
+    
+    # If not, render header
+    if(!all_optional){
+      cat("\n\n####", subsection, "\n")
+    } else { # if not, render header only when user provided optional inputs
+      all_empty = T
+      for(id in paragraph_ids){
+        if(input[[id]] != ""){
+          all_empty = F
+          break
+        }
+      }
+      if(!all_empty){
+        cat("\n\n####", subsection, "\n")
+      }
+    }
+  }
+  
+  
+  # TODO merge elemnt text with element empty
+  # TODO knit other elements
+  knit_element_text = function(elem_name){
+    placeholder = odmap_dict$paragraph[which(odmap_dict$paragraph_id == elem_name)]
+    cat("\n", placeholder, ": ", input[[elem_name]], "\n", sep="")
+  }
+  
+  knit_element_empty = function(elem_name){
+    if(!(elem_name %in% elem_hide[[input$o_objective_1]] | elem_name %in% elem_optional)){
+      placeholder = odmap_dict$paragraph[which(odmap_dict$paragraph_id == elem_name)]
+      cat("\n\n <span style='color:#DC3522'>\\<", placeholder, "\\> </span>\n", sep = "")
+    }
+  }
+  
+  
+  
   ####################
   ### Prepare data ###
   ####################
@@ -269,7 +411,7 @@ server <- function(input, output, session) {
         if(protocol_data$paragraph_id[i] == "o_objective_1"){
           updateSelectInput(session, inputId = protocol_data$paragraph_id[i], label = protocol_data$description[i])
         } else {
-           updateTextAreaInput(session, inputId = protocol_data$paragraph_id[i], value = protocol_data$description[i])
+          updateTextAreaInput(session, inputId = protocol_data$paragraph_id[i], value = protocol_data$description[i])
         }
       }
     }

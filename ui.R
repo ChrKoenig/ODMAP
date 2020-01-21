@@ -89,6 +89,7 @@ ui <- tagList(
           tabPanel("5. Prediction", value = "Prediction", fluidPage(
             em(p("Describe your model predictions in detail.", style = "padding-top: 10px; font-weight: 300")),
             uiOutput("Prediction_UI")
+            # ADD next previous buttons
           )) 
         ))
     )),
