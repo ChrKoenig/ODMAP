@@ -4,43 +4,41 @@ output: html_document
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
+source("./global.R")
 ```
 
 
 ```{r, results = 'asis'}
 cat("<h4><center> - ODMAP protocol - </center></h4>", sep = "")
-cat("<h2><center>", input$study_title, "</center></h2>", sep = "")
-cat("<p><b>Authors:</b> ", paste(authors$text, collapse = ", "), "</p>", sep = "")
-cat("<p><b>DOI:</b> ", input$DOI, "</p>", sep = "")
-cat("<p><b>Date:</b> ", as.character(Sys.Date()), "</p>", sep = "")
+cat("<h2><center>", input$o_title_1, "</center></h2>", sep = "")
+cat("<p><b>Authors: </b>", paste(authors$df$first_name, authors$df$last_name, collapse = ", "), "</p>", sep = "")
+cat("<p><b>Contact: </b>", input$o_authorship_2, "</p>", sep = "")
+cat("<p><b>Date: </b>", as.character(Sys.Date()), "</p>", sep = "")
 cat("\n", "______________", "\n", sep = "")
 
 section = ""
 subsection = ""
-for(i in 1:nrow(elem_input)){
+odmap_dict_rmd = filter(odmap_dict,! paragraph_id %in% c("o_title_1", "o_authorship_1", "o_authorship_2"))
+for(i in 1:nrow(odmap_dict_rmd)){
   # Find out if new section header needs to be rendered
-  section_new = elem_input$section_id[i]
+  section_new = odmap_dict_rmd$section_id[i]
   if(section_new != section & !(section_new %in% elem_hide[[input$o_objective_1]])){
     section = section_new
     knit_section(section)
   }
   
   # Find out if new subsection header needs to be rendered
-  subsection_new = elem_input$subsection_id[i]
+  subsection_new = odmap_dict_rmd$subsection_id[i]
   if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$o_objective_1]])){
     subsection = subsection_new
     knit_subsection(subsection)
   }
   
   # Render paragraphs
-  paragraph_id = elem_input$paragraph_id[i]
-  if(paragraph_id %in% names(input)){
-    if(input[[paragraph_id]] == ""){
-      knit_element_empty(paragraph_id)
-    } else {
-      knit_element_text(paragraph_id)
-    }
-  }
-  
+  switch(odmap_dict_rmd$paragraph_type[i],
+         text = knit_text(odmap_dict_rmd$paragraph_id[i]),
+         suggestion = knit_suggestion(odmap_dict_rmd$paragraph_id[i]),
+         extent = knit_extent(odmap_dict_rmd$paragraph_id[i]),
+         model_algorithm = knit_suggestion(odmap_dict_rmd$paragraph_id[i]),
+         model_setting = knit_model_settings(odmap_dict_rmd$paragraph_id[i]))
 }
-```

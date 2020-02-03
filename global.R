@@ -2,13 +2,10 @@ library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinythemes)
+library(shinydashboard)
 library(DT)
-library(rhandsontable)
 library(tidyverse)
 library(rangeModelMetadata)
-
-source("./render_functions.R")
-source("./knitting_functions.R")
 
 odmap_dict = read.csv("www/odmap_dict.csv", header = T, stringsAsFactors = F)
 rmm_dict = read.csv("www/rmm_dict.csv", header = T, stringsAsFactors = F) # TODO Change to pull table directly from package
@@ -46,4 +43,3 @@ parse_author_info_rmm = function(author_text){
 paste_author_info = function(author_data){
   # TODO (if even needed with simplified author structure)
 }
-
