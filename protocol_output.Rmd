@@ -3,12 +3,10 @@ output: word_document
 params: 
     study_title: "Study title"
     authors: "Authors"
-    DOI: "DOI"
-
-subtitle: "– ODMAP Protocol –"
+    
 title: "`r paste0(params$study_title)`"
 author: "`r paste0(params$authors)`"
-DOI: "`r paste0(params$DOI)`"
+subtitle: "– ODMAP Protocol –"
 date: "`r Sys.Date()`"
 ---
 
@@ -19,32 +17,30 @@ knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 ---
 
 ```{r, results = 'asis'}
-# Document content
 section = ""
 subsection = ""
-for(i in 1:nrow(elem_input)){
+odmap_dict_rmd = filter(odmap_dict,! element_id %in% c("o_title_1", "o_authorship_1", "o_authorship_2"))
+for(i in 1:nrow(odmap_dict_rmd)){
   # Find out if new section header needs to be rendered
-  section_new = elem_input$section_id[i]
+  section_new = odmap_dict_rmd$section_id[i]
   if(section_new != section & !(section_new %in% elem_hide[[input$o_objective_1]])){
     section = section_new
     knit_section(section)
   }
   
   # Find out if new subsection header needs to be rendered
-  subsection_new = elem_input$subsection_id[i]
+  subsection_new = odmap_dict_rmd$subsection_id[i]
   if(subsection_new != subsection & !(subsection_new %in% elem_hide[[input$o_objective_1]])){
     subsection = subsection_new
     knit_subsection(subsection)
   }
   
-  # Render paragraphs
-  paragraph_id = elem_input$paragraph_id[i]
-  if(paragraph_id %in% names(input)){
-    if(input[[paragraph_id]] == ""){
-      knit_element_empty(paragraph_id)
-    } else {
-      knit_element_text(paragraph_id)
-    }
-  }
+  # Render elements
+  switch(odmap_dict_rmd$element_type[i],
+         text = knit_text(odmap_dict_rmd$element_id[i]),
+         suggestion = knit_suggestion(odmap_dict_rmd$element_id[i]),
+         extent = knit_extent(odmap_dict_rmd$element_id[i]),
+         model_algorithm = knit_suggestion(odmap_dict_rmd$element_id[i]),
+         model_setting = knit_model_settings(odmap_dict_rmd$element_id[i]))
 }
 ```

@@ -20,10 +20,10 @@ server <- function(input, output, session) {
     progress = c()
     for(sect in unique(odmap_dict$section)){
       all_elements = odmap_dict %>% 
-        filter(section == sect & !paragraph_id %in% unlist(elem_hidden) & !paragraph_type %in% c("model_setting", "author")) %>% 
-        filter(if(input$hide_optional) !paragraph_id %in% elem_optional else T) %>% 
-        mutate(paragraph_id = ifelse(paragraph_type == "extent", paste0(paragraph_id, "_xmin"), paragraph_id)) %>%  
-        pull(paragraph_id)
+        filter(section == sect & !element_id %in% unlist(elem_hidden) & !element_type %in% c("model_setting", "author")) %>% 
+        filter(if(input$hide_optional) !element_id %in% elem_optional else T) %>% 
+        mutate(element_id = ifelse(element_type == "extent", paste0(element_id, "_xmin"), element_id)) %>%  
+        pull(element_id)
       if(length(all_elements) == 0){
         next 
       } else {
@@ -42,15 +42,15 @@ server <- function(input, output, session) {
     return(progress_UI_list)
   })
   
-  elem_hide = list("Inference and explanation" = c(pull(odmap_dict %>% filter(inference == 0), paragraph_id), # unused paragraphs
+  elem_hide = list("Inference and explanation" = c(pull(odmap_dict %>% filter(inference == 0), element_id), # unused elements
                                                    unique(pull(odmap_dict %>% group_by(subsection_id) %>% filter(all(inference  == 0)), subsection_id)), # unused subsections
                                                    "p"),
-                   "Prediction and mapping" =  c(pull(odmap_dict %>% filter(prediction == 0), paragraph_id), 
+                   "Prediction and mapping" =  c(pull(odmap_dict %>% filter(prediction == 0), element_id), 
                                                  unique(pull(odmap_dict %>% group_by(subsection_id) %>% filter(all(prediction == 0)), subsection_id))),
-                   "Projection and transfer" =  c(pull(odmap_dict %>% filter(projection == 0), paragraph_id),
+                   "Projection and transfer" =  c(pull(odmap_dict %>% filter(projection == 0), element_id),
                                                   unique(pull(odmap_dict %>% group_by(subsection_id) %>% filter(all(projection  == 0)), subsection_id))))
   
-  elem_optional = c(pull(odmap_dict %>% filter(optional == 1), paragraph_id), # optional paragraphs
+  elem_optional = c(pull(odmap_dict %>% filter(optional == 1), element_id), # optional elements
                     unique(pull(odmap_dict %>% group_by(subsection_id) %>% filter(all(optional == 1)), subsection_id))) # optional subsections)
   
   elem_hidden = "" # keep track of hidden elements
@@ -59,8 +59,8 @@ server <- function(input, output, session) {
   # ------------------------------------------------------------------------------------------#
   #                           Rendering functions for UI elements                             # 
   # ------------------------------------------------------------------------------------------#
-  render_text = function(paragraph_id, paragraph_placeholder){
-    textAreaInput(inputId = paragraph_id, placeholder = paragraph_placeholder, label = NULL, resize = "vertical")
+  render_text = function(element_id, element_placeholder){
+    textAreaInput(inputId = element_id, placeholder = element_placeholder, label = NULL, resize = "vertical")
   }
   
   render_authors = function(){
@@ -71,29 +71,29 @@ server <- function(input, output, session) {
     )
   }
   
-  render_objective = function(paragraph_id, paragraph_placeholder){
-    selectizeInput(inputId = paragraph_id, label = NULL, multiple = F, options = list(create = T, placeholder = paragraph_placeholder),
+  render_objective = function(element_id, element_placeholder){
+    selectizeInput(inputId = element_id, label = NULL, multiple = F, options = list(create = T, placeholder = element_placeholder),
                    choices = list("", "Inference and explanation", "Mapping and interpolation", "Forecast and transfer"))
   }
   
-  render_suggestion = function(paragraph_id, paragraph_placeholder, suggestions){
+  render_suggestion = function(element_id, element_placeholder, suggestions){
     suggestions = sort(trimws(unlist(strsplit(suggestions, ","))))
-    selectizeInput(inputId = paragraph_id, label = NULL, choices = suggestions, multiple = TRUE, options = list(create = T, placeholder = paragraph_placeholder))
+    selectizeInput(inputId = element_id, label = NULL, choices = suggestions, multiple = TRUE, options = list(create = T, placeholder = element_placeholder))
   }
   
-  render_extent = function(paragraph_id){
+  render_extent = function(element_id){
     splitLayout(
       cellWidths = c("110px",  "110px", "110px", "110px", "110px"),
       p("Spatial extent", style = "padding: 9px 12px"),
-      textAreaInput(inputId = paste0(paragraph_id, "_xmin"), placeholder = "xmin", label = NULL, resize = "none"),
-      textAreaInput(inputId = paste0(paragraph_id, "_xmax"), placeholder = "xmax", label = NULL, resize = "none"),
-      textAreaInput(inputId = paste0(paragraph_id, "_ymin"), placeholder = "ymin", label = NULL, resize = "none"),
-      textAreaInput(inputId = paste0(paragraph_id, "_ymax"), placeholder = "ymax", label = NULL, resize = "none")
+      textAreaInput(inputId = paste0(element_id, "_xmin"), placeholder = "xmin", label = NULL, resize = "none"),
+      textAreaInput(inputId = paste0(element_id, "_xmax"), placeholder = "xmax", label = NULL, resize = "none"),
+      textAreaInput(inputId = paste0(element_id, "_ymin"), placeholder = "ymin", label = NULL, resize = "none"),
+      textAreaInput(inputId = paste0(element_id, "_ymax"), placeholder = "ymax", label = NULL, resize = "none")
     )
   }
   
-  render_model_algorithm = function(paragraph_id, paragraph_placeholder){
-    selectizeInput(inputId = paragraph_id, label = NULL, choices = model_settings$suggestions, multiple = TRUE, options = list(create = T,  placeholder = paragraph_placeholder))
+  render_model_algorithm = function(element_id, element_placeholder){
+    selectizeInput(inputId = element_id, label = NULL, choices = model_settings$suggestions, multiple = TRUE, options = list(create = T,  placeholder = element_placeholder))
   }
   
   render_model_settings = function(){
@@ -107,27 +107,27 @@ server <- function(input, output, session) {
   render_section = function(section, odmap_dict){
     section_dict = filter(odmap_dict, section == !!section) 
     section_rendered = renderUI({
-      section_UI_list = vector("list", nrow(section_dict)) # holds UI elements for all ODMAP paragraphs belonging to 'section'
+      section_UI_list = vector("list", nrow(section_dict)) # holds UI elements for all ODMAP elements belonging to 'section'
       subsection = ""
       for(i in 1:nrow(section_dict)){
-        paragraph_UI_list = vector("list", 3) # holds UI elements for current paragraph 
+        element_UI_list = vector("list", 3) # holds UI elements for current element 
         
         # First element: Header 
         if(subsection != section_dict$subsection_id[i]){
           subsection = section_dict$subsection_id[i]
           subsection_label = section_dict$subsection[i]
-          paragraph_UI_list[[1]] = div(id = section_dict$subsection_id[i], h5(subsection_label, style = "font-weight: bold"))
+          element_UI_list[[1]] = div(id = section_dict$subsection_id[i], h5(subsection_label, style = "font-weight: bold"))
         }
         
         # Second element: Input field(s) 
-        paragraph_UI_list[[2]] = switch(section_dict$paragraph_type[i],
-                                        text = render_text(section_dict$paragraph_id[i], section_dict$paragraph_placeholder[i]),
-                                        author = render_authors(),
-                                        objective = render_objective(section_dict$paragraph_id[i], section_dict$paragraph_placeholder[i]),
-                                        suggestion = render_suggestion(section_dict$paragraph_id[i], section_dict$paragraph_placeholder[i], section_dict$suggestions[i]),
-                                        extent = render_extent(section_dict$paragraph_id[i]),
-                                        model_algorithm = render_model_algorithm(section_dict$paragraph_id[i], section_dict$paragraph_placeholder[i]),
-                                        model_setting = render_model_settings())
+        element_UI_list[[2]] = switch(section_dict$element_type[i],
+                                      text = render_text(section_dict$element_id[i], section_dict$element_placeholder[i]),
+                                      author = render_authors(),
+                                      objective = render_objective(section_dict$element_id[i], section_dict$element_placeholder[i]),
+                                      suggestion = render_suggestion(section_dict$element_id[i], section_dict$element_placeholder[i], section_dict$suggestions[i]),
+                                      extent = render_extent(section_dict$element_id[i]),
+                                      model_algorithm = render_model_algorithm(section_dict$element_id[i], section_dict$element_placeholder[i]),
+                                      model_setting = render_model_settings())
         
         # Third element: Next/previous button
         if(i == nrow(section_dict)){
@@ -135,8 +135,8 @@ server <- function(input, output, session) {
         }
         
         # Reduce list to non-empty elements
-        paragraph_UI_list = Filter(Negate(is.null), paragraph_UI_list)
-        section_UI_list[[i]] = paragraph_UI_list
+        element_UI_list = Filter(Negate(is.null), element_UI_list)
+        section_UI_list[[i]] = element_UI_list
       }
       return(section_UI_list)
     })
@@ -153,20 +153,20 @@ server <- function(input, output, session) {
   }
   
   knit_subsection= function(subsection_id){
-    # Get all paragraphs
-    paragraph_ids = odmap_dict$paragraph_id[which(odmap_dict$subsection_id == subsection_id)]
+    # Get all elements
+    element_ids = odmap_dict$element_id[which(odmap_dict$subsection_id == subsection_id)]
     subsection = unique(odmap_dict$subsection[which(odmap_dict$subsection_id == subsection_id)])
     
     # Find out whether subsection needs to be rendered at all
-    # Are all paragraphs optional?
-    all_optional = all((paragraph_ids %in% elem_hide[[input$o_objective_1]] | paragraph_ids %in% elem_optional))
+    # Are all elements optional?
+    all_optional = all((element_ids %in% elem_hide[[input$o_objective_1]] | element_ids %in% elem_optional))
     
     # If not, render header
     if(!all_optional){
       cat("\n\n####", subsection, "\n")
     } else { # if not, render header only when user provided optional inputs
       all_empty = T
-      for(id in paragraph_ids){
+      for(id in element_ids){
         if(input[[id]] != ""){
           all_empty = F
           break
@@ -182,19 +182,22 @@ server <- function(input, output, session) {
     if(input[[element_id]] == ""){
       knit_missing(element_id)
     } else {
-      element_name = odmap_dict$paragraph[which(odmap_dict$paragraph_id == element_id)]
+      element_name = odmap_dict$element[which(odmap_dict$element_id == element_id)]
       cat("\n", element_name, ": ", input[[element_id]], "\n", sep="")
     }
+  }
+  
+  knit_authors = function(element_id){
+    paste(authors$df$first_name, authors$df$last_name, collapse = ", ")
   }
   
   knit_extent = function(element_id){
     if(any(c(input[[paste0(element_id, "_xmin")]], input[[paste0(element_id, "_xmax")]], input[[paste0(element_id, "_ymin")]], input[[paste0(element_id, "_ymax")]]) == "")){
       knit_missing(element_id)
     } else {
-      element_name = odmap_dict$paragraph[which(odmap_dict$paragraph_id == element_id)]
       element_value = paste(c(input[[paste0(element_id, "_xmin")]], input[[paste0(element_id, "_xmax")]], 
                               input[[paste0(element_id, "_ymin")]], input[[paste0(element_id, "_ymax")]]), collapse = ", ")
-      cat("\n", element_name, " (xmin, xmax, ymin, ymax): ", element_value, "\n", sep="")
+      cat("\nSpatial extent: ", element_value, " (xmin, xmax, ymin, ymax)\n", sep="")
     }
   }
   
@@ -202,7 +205,7 @@ server <- function(input, output, session) {
     if(is.null(input[[element_id]])){
       knit_missing(element_id)
     } else {
-      element_name = odmap_dict$paragraph[which(odmap_dict$paragraph_id == element_id)]
+      element_name = odmap_dict$element[which(odmap_dict$element_id == element_id)]
       cat("\n", element_name, ": ", paste(input[[element_id]], collapse = ", "), "\n", sep="")
     }
   }
@@ -225,7 +228,7 @@ server <- function(input, output, session) {
   
   knit_missing = function(element_id){
     if(!(element_id %in% elem_hide[[input$o_objective_1]] | element_id %in% elem_optional)){
-      placeholder = odmap_dict$paragraph[which(odmap_dict$paragraph_id == element_id)]
+      placeholder = odmap_dict$element[which(odmap_dict$element_id == element_id)]
       cat("\n\n <span style='color:#DC3522'>\\<", placeholder, "\\> </span>\n", sep = "")
     }
   }
@@ -233,69 +236,119 @@ server <- function(input, output, session) {
   # ------------------------------------------------------------------------------------------#
   #                                   Import functions                                        # 
   # ------------------------------------------------------------------------------------------#
-  
-  # TODO write odmap import functions
-  import_odmap_to_text = function(paragraph_id, values){}
-  import_odmap_to_authors = function(paragraph_id, values){}
-  import_odmap_to_suggestion = function(paragraph_id, values){}
-  import_odmap_to_extent = function(paragraph_id, values){}
-  import_odmap_to_algorithm = function(paragraph_id, values){}
-  
-  import_rmm_to_text = function(paragraph_id, values){
-    updateTextAreaInput(session = session, inputId = paragraph_id, 
-                        value = paste(paste0(values, " (", names(values), ")"), collapse = ",\n"))
+  # ODMAP import functions
+  import_odmap_to_text = function(element_id, values){
+    updateTextAreaInput(session = session, inputId = element_id, value = values)
   }
   
-  import_rmm_to_authors = function(paragraph_id, values){
-    tryCatch(expr = {
-    names_split = unlist(strsplit(values, split = " and "))
-    names_split = strsplit(names_split, split = ", ")
+  import_odmap_to_authors = function(element_id, values){
+    names_split = unlist(strsplit(values, split = "; "))
+    names_split = regmatches(names_split, regexpr(" ", names_split), invert = TRUE)
     authors$df = authors$df[0,] # Delete previous entries
     for(i in 1:length(names_split)){
       author_tmp = names_split[[i]]
-      authors$df = rbind(authors$df, data.frame("first_name" = author_tmp[2],  "last_name" = author_tmp[1]))
-    }}, error = function(e){
-      showNotification("Could not import author list", duration = 3, type = "error")
-    })
-  }
-  
-  import_rmm_to_suggestion = function(paragraph_id, values){
-    values = unlist(strsplit(values, split = "; "))
-    suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$paragraph_id == paragraph_id], ","))
-    suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
-    updateSelectizeInput(session = session, inputId = paste0(paragraph_id), choices = suggestions_new, selected = as.character(values))
-  }
-  
-  import_rmm_to_extent = function(paragraph_id, values){
-    values = unlist(strsplit(values, "; "))
-    for(i in 1:length(values)){
-      values_split = unlist(strsplit(values[i], ": "))
-      updateTextAreaInput(session = session, inputId = paste0(paragraph_id, "_", values_split[1]), value = paste(values_split[2]))
+      authors$df = rbind(authors$df, data.frame("first_name" = author_tmp[1],  "last_name" = author_tmp[2]))
     }
   }
   
-  import_rmm_to_algorithm = function(imported_values){
-    
+  import_odmap_to_suggestion = function(element_id, values){
+    values = unlist(strsplit(values, split = "; "))
+    suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$element_id == element_id], ","))
+    suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
+    updateSelectizeInput(session = session, inputId = paste0(element_id), choices = suggestions_new, selected = as.character(values))
   }
+  
+  import_odmap_to_extent = function(element_id, values){
+    values = gsub("(^.*)( \\(xmin, xmax, ymin, ymax\\))", "\\1", values)
+    values_split = unlist(strsplit(values, ", "))
+    updateTextAreaInput(session = session, inputId = paste0(element_id, "_xmin"), value = paste(values_split[1]))
+    updateTextAreaInput(session = session, inputId = paste0(element_id, "_xmax"), value = paste(values_split[2]))
+    updateTextAreaInput(session = session, inputId = paste0(element_id, "_ymax"), value = paste(values_split[3]))
+    updateTextAreaInput(session = session, inputId = paste0(element_id, "_ymin"), value = paste(values_split[4]))
+  }
+  
+  import_odmap_to_algorithm = function(element_id, values){}
+  
+  # RMMS import functions
+  import_rmm_to_text = function(element_id, values){
+    updateTextAreaInput(session = session, inputId = element_id, 
+                        value = paste(paste0(values, " (", names(values), ")"), collapse = ",\n"))
+  }
+  
+  import_rmm_to_authors = function(element_id, values){
+    tryCatch(expr = {
+      names_split = unlist(strsplit(values, split = " and "))
+      names_split = strsplit(names_split, split = ", ")
+      authors$df = authors$df[0,] # Delete previous entries
+      for(i in 1:length(names_split)){
+        author_tmp = names_split[[i]]
+        authors$df = rbind(authors$df, data.frame("first_name" = author_tmp[2],  "last_name" = author_tmp[1]))
+      }}, error = function(e){
+        showNotification("Could not import author list", duration = 3, type = "error")
+      })
+  }
+  
+  import_rmm_to_suggestion = function(element_id, values){
+    values = unlist(strsplit(values, split = "; "))
+    suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$element_id == element_id], ","))
+    suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
+    updateSelectizeInput(session = session, inputId = paste0(element_id), choices = suggestions_new, selected = as.character(values))
+  }
+  
+  import_rmm_to_extent = function(element_id, values){
+    values = unlist(strsplit(values, "; "))
+    for(i in 1:length(values)){
+      values_split = unlist(strsplit(values[i], ": "))
+      updateTextAreaInput(session = session, inputId = paste0(element_id, "_", values_split[1]), value = paste(values_split[2]))
+    }
+  }
+  
+  import_rmm_to_algorithm = function(imported_values){}
   
   # ------------------------------------------------------------------------------------------#
   #                                     Export functions                                      # 
   # ------------------------------------------------------------------------------------------#
-  export_text = function(paragraph_id){
-    return(input[[paragraph_id]])
+  export_standard = function(element_id){
+    val = input[[element_id]]
+    return(ifelse(!is.null(val), val, NA))
   }
   
-  export_authors = function(paragraph_id){
-    paste(authors$df$first_name, authors$df$last_name, collapse = "; ")
+  export_authors = function(element_id){
+    return(ifelse(nrow(authors$df) > 0, paste(authors$df$first_name, authors$df$last_name, collapse = "; "), NA))
   }
   
-  export_suggestion = function(paragraph_id){
-    return(paste(input[[paragraph_id]], collapse = "; "))
+  export_suggestion = function(element_id){
+    val = input[[element_id]]
+    return(ifelse(!is.null(val), paste(input[[element_id]], collapse = "; "), NA))
   }
-  export_extent = function(paragraph_id){
-    return(input[[paragraph_id]])
+  
+  export_extent = function(element_id){
+    if(any(c(input[[paste0(element_id, "_xmin")]], input[[paste0(element_id, "_xmax")]], input[[paste0(element_id, "_ymin")]], input[[paste0(element_id, "_ymax")]]) == "")){
+      return(NA)
+    } else {
+      vals = paste(c(input[[paste0(element_id, "_xmin")]], input[[paste0(element_id, "_xmax")]], 
+                     input[[paste0(element_id, "_ymin")]], input[[paste0(element_id, "_ymax")]]), collapse = ", ")
+      return(paste0(vals, " (xmin, xmax, ymin, ymax)"))
+    }
   }
-  export_model_algorithm = function(paragraph_id){}
+  
+  export_model_setting = function(element_id){
+    if(is.null(input[["o_algorithms_1"]])){
+      return(NA)
+    } else {
+      settings = c()
+      for(alg in input[["o_algorithms_1"]]){
+        settings_tab = model_settings[[alg]] %>% filter(value != "")
+        if(nrow(settings_tab) == 0) {
+          settings[alg] = paste0(alg, ": no settings provided")
+        } else {
+          settings_char = paste0(settings_tab$setting, " (", settings_tab$value, ")", collapse = ", ")
+          settings[alg] = paste0(alg, ": ", settings_char)
+        }
+      }
+      return(paste0(settings, collapse = ";"))
+    }
+  }
   
   # ------------------------------------------------------------------------------------------#
   #                                      Event handlers                                       # 
@@ -340,13 +393,14 @@ server <- function(input, output, session) {
         model_settings[[new_alg]] = rmm_dict %>% 
           filter(field1 == "model" & field2 == "algorithm" & field3 == new_alg) %>%
           mutate(setting = entity, value = NA) %>% 
-          select(setting, value)
+          dplyr::select(setting, value)
       } else {
         model_settings[[new_alg]] = data.frame(setting = character(0), value = character(0))
       }
       
       # Add new dataframe to output and settings_tabset
-      output[[new_alg]] = renderDT(model_settings[[new_alg]], editable = T, rownames = F, options = list(dom = "t", pageLength = 50))
+      output[[new_alg]] = renderDT(model_settings[[new_alg]], editable = T, rownames = F, 
+                                   options = list(dom = "t", pageLength = 50, autoWidth = TRUE, columnDefs = list(list(width = '50%', targets = "_all"))))
       appendTab(inputId = "settings_tabset", select = TRUE, tabPanel(title = new_alg, value = new_alg, DTOutput(outputId = new_alg)))
       observeEvent(input[[paste0(new_alg, '_cell_edit')]], {
         model_settings[[new_alg]][input[[paste0(new_alg, '_cell_edit')]]$row, input[[paste0(new_alg, '_cell_edit')]]$col + 1] = input[[paste0(new_alg, '_cell_edit')]]$value
@@ -387,8 +441,10 @@ server <- function(input, output, session) {
         dplyr::select(-row_id)
       
       authors_dt = datatable(authors_tmp, escape = F, rownames = F, editable = T, colnames = c("First name", "Last name", ""), 
-                             options = list(dom = "t", autoWidth = TRUE, 
-                                            columnDefs = list(list(width = 'px', targets = c(2)), list(orderable = F, targets = c(0:2)))))
+                             options = list(dom = "t", autoWidth = F, 
+                                            columnDefs = list(list(width = '10%', targets = c(2)), 
+                                                              list(width = '45%', targets = c(0:1)),
+                                                              list(orderable = F, targets = c(0:2)))))
     }
     return(authors_dt)
   })
@@ -442,54 +498,6 @@ server <- function(input, output, session) {
   } 
   
   # ------------------------------------------------------------------------------------------#
-  #                                         Download                                          # 
-  # ------------------------------------------------------------------------------------------#
-  output$protocol_download = downloadHandler(
-    filename = function(){
-      paste0("ODMAP_protocol_", Sys.Date(), ".", input$document_format)
-    },
-    content = function(file){
-      odmap_download = odmap_dict %>% 
-        filter(!paragraph_id %in% elem_hide[[input$o_objective_1]]) %>% # use only relevent rows
-        dplyr::select(section, subsection, paragraph, paragraph_id, paragraph_type) %>% 
-        mutate(Value = NA)
-      
-      # Create .csv-files
-      if(input$document_format == "csv"){
-        # Create table
-        for(i in 1:nrow(odmap_download)){
-          switch(odmap_download$paragraph_type[i],
-                 text = export_text(paragraph_id = odmap_download$paragraph_id[i]),
-                 author = export_authors(paragraph_id = odmap_download$paragraph_id[i]),
-                 suggestion = export_suggestion(paragraph_id = odmap_download$paragraph_id[i]),
-                 extent = export_extent(paragraph_id = odmap_download$paragraph_id[i]),
-                 model_algorithm = export_model_algorithm(paragraph_id = odmap_download$paragraph_id[i]))
-        }
-
-        odmap_download$paragraph_id = NULL
-        odmap_download$paragraph_type = NULL
-        
-        # Write output
-        file_conn = file(file, open = "w")
-        write.csv(odmap_download, file = file_conn, na = "")
-        close(file_conn)
-        
-        # CREATE WORD FILES
-      } else {
-        src <- normalizePath("protocol_output.Rmd")
-        
-        # temporarily switch to the temp dir, in case you do not have write permission to the current working directory
-        owd <- setwd(tempdir())
-        on.exit(setwd(owd))
-        file.copy(src, "protocol_output.Rmd", overwrite = TRUE)
-        report_output = rmarkdown::render("protocol_output.Rmd", rmarkdown::word_document(),
-                                          params = list(study_title = input$study_title, authors =  paste(authors$text, collapse = ", "), DOI = input$DOI))
-        file.rename(report_output, file)
-      }
-    }
-  )
-  
-  # ------------------------------------------------------------------------------------------#
   #                                      Upload and Import                                    # 
   # ------------------------------------------------------------------------------------------#
   output$Upload_UI = renderUI({
@@ -518,8 +526,8 @@ server <- function(input, output, session) {
       }
       
       # Identify protocol type
-      if(all(c("Section", "Subsection", "Paragraph", "Value") %in% colnames(protocol_upload))){
-        protocol_type = reactive("ODMAP")
+      if(all(c("section", "subsection", "element", "Value") %in% colnames(protocol_upload))){
+        protocol_type = "ODMAP"
       } else if(all(c("Field.1", "Field.2", "Field.3", "Entity", "Value") %in% colnames(protocol_upload))){
         protocol_type = "RMMS"
       } else {
@@ -536,44 +544,19 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$ODMAP_to_input, {
-    # Fill in general information
-    protocol_header = read_delim(input$upload$datapath, skip = 1, n_max=3, delim=':', col_names = F, col_types = cols())
-    authors_upload = protocol_header[which(protocol_header[,1] == 'Authors'), 2]
-    authors_upload = trimws(str_split(authors_upload, ";", simplify = T))
-    if(!all(authors_upload == "")){
-      if(input$replace_values == "Yes"){
-        authors$df = authors$df[0,]
-        authors$text = character(0)
-      }
-      for(author in authors_upload){
-        parse_author_info(author)
-      }
-    }
-    if(!(input$study_title != "" & input$replace_values == "No")){
-      if(!is.na(as.character(protocol_header[which(protocol_header[,1] == 'Study title'),2]))) {
-        updateTextInput(session, inputId = "study_title", value = as.character(protocol_header[which(protocol_header[,1] == 'Study title'), 2]))
-      }
-    }
-    if(!(input$DOI != "" & input$replace_values == "No")){
-      if(!is.na(as.character(protocol_header[which(protocol_header[,1]=='DOI'),2]))) {
-        updateTextInput(session, inputId = "DOI", value = as.character(protocol_header[which(protocol_header[,1] == 'DOI'), 2]))
-      }
-    }
+    protocol_upload = read.csv(input$upload$datapath, sep = ",", stringsAsFactors = F, na.strings = c("NA", "", "NULL")) %>% 
+      left_join(odmap_dict, by = c("section", "subsection", "element")) %>% 
+      mutate(Value = trimws(Value)) %>% 
+      filter(!is.na(Value))
     
-    # Fill in ODMAP information
-    protocol_data = read_csv(input$upload$datapath, skip = 6, col_types = cols()) %>% 
-      left_join(odmap_dict, by = c("section", "subsection", "paragraph")) %>% 
-      mutate(description = trimws(description)) %>% 
-      filter(description != "")
-    
-    for(i in 1:nrow(protocol_data)){
-      if(!(input[[protocol_data$paragraph_id[i]]] != "" & input$replace_values == "No")){
-        if(protocol_data$paragraph_id[i] == "o_objective_1"){
-          updateSelectInput(session, inputId = protocol_data$paragraph_id[i], label = protocol_data$description[i])
-        } else {
-          updateTextAreaInput(session, inputId = protocol_data$paragraph_id[i], value = protocol_data$description[i])
-        }
-      }
+    # Update ODMAP input fields with imported values
+    for(i in 1:nrow(protocol_upload)){
+      switch(protocol_upload$element_type[i],
+             text = import_odmap_to_text(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             author = import_odmap_to_authors(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             suggestion = import_odmap_to_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             extent = import_odmap_to_extent(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             model_algorithm = import_odmap_to_algorithm())
     }
     
     # Switch to "Create a protocol" 
@@ -596,17 +579,17 @@ server <- function(input, output, session) {
       
       odmap_subset = odmap_dict[grepl(rmm_fields, str_split(odmap_dict$rmm_fields, pattern = ","), fixed = T) & grepl(rmm_entity, str_split(odmap_dict$rmm_entities, pattern = ","), fixed = T),]
       if(nrow(odmap_subset) == 1){
-        imported_values[[odmap_subset$paragraph_id]][[paste(rmm_fields, rmm_entity, sep = "-")]] = protocol_upload$Value[i]
+        imported_values[[odmap_subset$element_id]][[paste(rmm_fields, rmm_entity, sep = "-")]] = protocol_upload$Value[i]
       }
     }
     
     # 2. Update ODMAP input fields with imported values
     for(i in 1:length(imported_values)){
-      switch(odmap_dict$paragraph_type[which(odmap_dict$paragraph_id == names(imported_values)[i])],
-             text = import_rmm_to_text(paragraph_id = names(imported_values)[i], values = imported_values[[i]]),
-             author = import_rmm_to_authors(paragraph_id = names(imported_values)[i], values = imported_values[[i]]),
-             suggestion = import_rmm_to_suggestion(paragraph_id = names(imported_values)[i], values = imported_values[[i]]),
-             extent = import_rmm_to_extent(paragraph_id = names(imported_values)[i], values = imported_values[[i]]),
+      switch(odmap_dict$element_type[which(odmap_dict$element_id == names(imported_values)[i])],
+             text = import_rmm_to_text(element_id = names(imported_values)[i], values = imported_values[[i]]),
+             author = import_rmm_to_authors(element_id = names(imported_values)[i], values = imported_values[[i]]),
+             suggestion = import_rmm_to_suggestion(element_id = names(imported_values)[i], values = imported_values[[i]]),
+             extent = import_rmm_to_extent(element_id = names(imported_values)[i], values = imported_values[[i]]),
              model_algorithm = import_rmm_to_algorithm())
     }
     
@@ -614,4 +597,55 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "navbar", selected = "tab_2")
     reset("upload")
   })
+  
+  # ------------------------------------------------------------------------------------------#
+  #                                         Download                                          # 
+  # ------------------------------------------------------------------------------------------#
+  output$protocol_download = downloadHandler(
+    filename = function(){
+      paste0("ODMAP_protocol_", Sys.Date(), ".", input$document_format)
+    },
+    content = function(file){
+      odmap_download = odmap_dict %>% 
+        filter(!element_id %in% elem_hide[[input$o_objective_1]]) %>% # use only relevent rows
+        dplyr::select(section, subsection, element, element_id, element_type) %>% 
+        mutate(Value = NA)
+      
+      # Create .csv-files
+      if(input$document_format == "csv"){
+        # Create table
+        for(i in 1:nrow(odmap_download)){
+          odmap_download$Value[i] = switch(odmap_download$element_type[i],
+                                           text = export_standard(odmap_download$element_id[i]),
+                                           author = export_authors(odmap_download$element_id[i]),
+                                           objective = export_standard(odmap_download$element_id[i]),
+                                           suggestion = export_suggestion(odmap_download$element_id[i]),
+                                           extent = export_extent(odmap_download$element_id[i]),
+                                           model_algorithm = export_suggestion(odmap_download$element_id[i]),
+                                           model_setting = export_model_setting(odmap_download$element_id[i]),
+                                           "") 
+        }
+        
+        odmap_download$element_id = NULL
+        odmap_download$element_type = NULL
+        
+        # Write output
+        file_conn = file(file, open = "w")
+        write.csv(odmap_download, file = file_conn, na = "", row.names = F)
+        close(file_conn)
+        
+        # CREATE WORD FILES
+      } else {
+        src <- normalizePath("protocol_output.Rmd")
+        
+        # temporarily switch to the temp dir, in case you do not have write permission to the current working directory
+        wd_orig <- setwd(tempdir())
+        on.exit(setwd(wd_orig))
+        file.copy(src, "protocol_output.Rmd", overwrite = TRUE)
+        odmap_download = rmarkdown::render("protocol_output.Rmd", rmarkdown::word_document(),
+                                           params = list(study_title = input$o_title_1, authors = paste(authors$df$first_name, authors$df$last_name, collapse = ", ")))
+        file.rename(odmap_download, file)
+      }
+    }
+  )
 }

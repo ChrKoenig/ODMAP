@@ -5,7 +5,7 @@ output: html_document
 
 
 
-<h4><center> - ODMAP protocol - </center></h4><h2><center></center></h2><p><b>Authors: </b></p><p><b>Contact: </b></p><p><b>Date: </b>2020-02-03</p>
+<h4><center> - ODMAP protocol - </center></h4><h2><center>My study</center></h2><p><b>Authors: </b>Christian König, Damaris Zurell</p><p><b>Contact: </b>chr.koenig@outlook.com</p><p><b>Date: </b>2020-02-04</p>
 ______________
 
 
@@ -20,41 +20,35 @@ ______________
 
 #### Focal Taxon 
 
-
- <span style='color:#DC3522'>\<Focal Taxon\> </span>
+Focal Taxon: asf
 
 
 #### Location 
 
-
- <span style='color:#DC3522'>\<Location\> </span>
+Location: ggg
 
 
 #### Scale of Analysis 
 
+Spatial extent: 5, 5, 6, 6 (xmin, xmax, ymin, ymax)
 
- <span style='color:#DC3522'>\<Spatial extent\> </span>
+Spatial resolution: sac
 
+Temporal extent: asc
 
- <span style='color:#DC3522'>\<Temporal extent\> </span>
-
-
- <span style='color:#DC3522'>\<Boundary\> </span>
+Boundary: natural
 
 
 #### Biodiversity data 
 
+Observation type: citizen science
 
- <span style='color:#DC3522'>\<Observation type\> </span>
-
-
- <span style='color:#DC3522'>\<Response data type\> </span>
+Response data type: presence-only
 
 
 #### Predictors 
 
-
- <span style='color:#DC3522'>\<Predictor types\> </span>
+Predictor types: edaphic, habitat
 
 
 #### Hyptheses 
@@ -65,8 +59,7 @@ ______________
 
 #### Assumptions 
 
-
- <span style='color:#DC3522'>\<Model assumptions\> </span>
+Model assumptions: qwfqwf
 
 
 #### Algorithms 
@@ -101,11 +94,9 @@ ______________
 
 #### Biodiversity data 
 
+Taxon names: Plants
 
- <span style='color:#DC3522'>\<Taxon names\> </span>
-
-
- <span style='color:#DC3522'>\<Ecological level\> </span>
+Ecological level: individuals, species
 
 
  <span style='color:#DC3522'>\<Taxonomic reference system\> </span>
@@ -113,8 +104,7 @@ ______________
 
  <span style='color:#DC3522'>\<Data sources\> </span>
 
-
- <span style='color:#DC3522'>\<Sampling design\> </span>
+Sampling design: environmentally stratified
 
 
  <span style='color:#DC3522'>\<Sample size\> </span>
@@ -161,8 +151,7 @@ ______________
 
  <span style='color:#DC3522'>\<Data sources\> </span>
 
-
- <span style='color:#DC3522'>\<Spatial extent\> </span>
+Spatial extent: 2315, 1513, 6545, 8856 (xmin, xmax, ymin, ymax)
 
 
  <span style='color:#DC3522'>\<Spatial resolution\> </span>
@@ -224,23 +213,18 @@ ______________
 
 #### Performance statistics 
 
+Performance on training data: AUC, BIC
 
- <span style='color:#DC3522'>\<Performance on training data\> </span>
+Performance on validation data: AIC, BIC
 
-
- <span style='color:#DC3522'>\<Performance on validation data\> </span>
-
-
- <span style='color:#DC3522'>\<Performance on test data\> </span>
+Performance on test data: AIC, AUC difference
 
 
 #### Plausibility check 
 
+Response shapes: Didn't check
 
- <span style='color:#DC3522'>\<Response shapes\> </span>
-
-
- <span style='color:#DC3522'>\<Expert judgement\> </span>
+Expert judgement: map display
 
 
 ## Prediction 
@@ -248,8 +232,7 @@ ______________
 
 #### Prediction output 
 
-
- <span style='color:#DC3522'>\<Prediction unit\> </span>
+Prediction unit: probabilities of occurrence
 
 
 #### Uncertainty quantification 

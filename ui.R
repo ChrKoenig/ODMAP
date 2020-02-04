@@ -23,7 +23,7 @@ ui <- navbarPage(
              Despite the widespread use of SDMs, the standardisation and documentation of model protocols remains limited. To address these issues, 
              we propose a standard protocol for reporting SDMs. We call this the ODMAP (Overview, Data, Model, Assessment and Prediction) protocol
              as each of its components reflectsthe main steps involved in building SDMs and other empirically-based biodiversity models."), 
-          img(src = "workflow.jpg", width = 400, align = "center"),
+          img(src = "workflow.jpg", width = 700, align = "auto"),
           p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach to documentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses."),
@@ -33,7 +33,7 @@ ui <- navbarPage(
         )),
         tabPanel("How to use this app", value = "howto", fluidPage(
           strong(p("How to create an ODMAP protocol", style = "padding-top: 10px")),
-          p("Enter all relevant information into the fields provided in steps 0-5. The switch on the left allows you to hide optional fields and show only the mandatory fields. 
+          p("Enter all relevant information into the fields provided in steps 1-5. The switch on the left allows you to hide optional fields and show only the mandatory fields. 
             These will differ according to the model objective, which you can choose below."),
           p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
           p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. 
@@ -107,11 +107,12 @@ ui <- navbarPage(
       fluidRow(
         column(width = 2),
         column(width = 8, 
-               p("There are two options for uploading data and importing them into your ODMAP protocol"),
+               p("There are two options for importing data into your ODMAP protocol"),
                p(tags$b("(1) Upload an ODMAP protocol (.csv)"), br(), "This option is convenient if you want to edit or resume working on a previously saved ODMAP protocol."),
                p(tags$b("(2) Upload an RMMS file (.RDS or .csv)"), br(), "The rangeModelMetaData package of Merow et al. (2019) allows to export standardized metadata 
-      for SDMs directly from R. Note that the objectives of ODMAP and RMMS differ, and not all fields between both approaches are equivalent. This option is therefore not a replacement
-      for filling out ODMAP, but eases time-consuming tasks such as documenting model settings for different model algorithms."),
+                         for SDMs directly from R. Note that the objectives of ODMAP and RMMS differ and not all fields can be mapped between both approaches. 
+                         This option is therefore not a replacement for filling out ODMAP, but facilitates time-consuming tasks such as documenting model settings or references. 
+                         If RMMS values have been imported, the corresponding field and entity is indicated in parentheses as Field1($Field2)($Field3)-Entity)"),
                fileInput("upload", "Choose file",  accept = c(".csv")),
                uiOutput("Upload_UI")),
         column(width = 2)
