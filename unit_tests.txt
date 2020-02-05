@@ -1,2 +1,0 @@
-empty 1-5 gives empty download table
-empty author doesnt throw error
