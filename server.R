@@ -193,13 +193,13 @@ server <- function(input, output, session) {
   # ------------------------------------------------------------------------------------------#
   # ODMAP import functions
   import_odmap_to_text = function(element_id, values){
-    if(input[[element_id]] == "" | input[["replace_values"]] == T){
+    if(input[[element_id]] == "" | input[["replace_values"]] == "Yes"){
       updateTextAreaInput(session = session, inputId = element_id, value = values)  
     }
   }
   
   import_odmap_to_authors = function(element_id, values){
-    if(nrow(authors_df) == 0 | input[["replace_values"]] == T){
+    if(nrow(authors_df) == 0 | input[["replace_values"]] == "Yes"){
       names_split = unlist(strsplit(values, split = "; "))
       names_split = regmatches(names_split, regexpr(" ", names_split), invert = TRUE)
       authors$df = authors$df[0,] # Delete previous entries
@@ -211,7 +211,7 @@ server <- function(input, output, session) {
   }
   
   import_odmap_to_suggestion = function(element_id, values){
-    if(length(input[[element_id]]) == 0 | input[["replace_values"]] == T){
+    if(length(input[[element_id]]) == 0 | input[["replace_values"]] == "Yes"){
       values = unlist(strsplit(values, split = "; "))
       suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$element_id == element_id], ","))
       suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
     values_split = unlist(strsplit(values, ", "))
     names(values_split) = c("xmin", "xmax", "ymin", "ymax")
     for(i in 1:length(values_plit)){
-      if(input[[paste0(element_id, "_", names(values_split[i]))]] == "" | input[["replace_values"]] == T){
+      if(input[[paste0(element_id, "_", names(values_split[i]))]] == "" | input[["replace_values"]] == "Yes"){
         updateTextAreaInput(session = session, inputId = paste0(element_id, "_", names(values_split[i])), value = values_split[i])    
       }
     }
@@ -232,7 +232,7 @@ server <- function(input, output, session) {
   
   
   import_odmap_to_model_algorithm = function(element_id, values){
-    if(length(input[[element_id]]) == 0 | input[["replace_values"]] == T){
+    if(length(input[[element_id]]) == 0 | input[["replace_values"]] == "Yes"){
       values = unlist(strsplit(values, split = "; "))
       suggestions_new =  sort(trimws(c(model_settings$suggestions, as.character(values))))
       updateSelectizeInput(session = session, inputId = element_id, choices = suggestions_new, selected = values)  
@@ -248,7 +248,7 @@ server <- function(input, output, session) {
       settings = unlist(strsplit(settings_split[2], split = "\\), ")) # "), " is a more reliable split string than ","
       settings[length(settings)] = substr(settings[length(settings)], 1, nchar(settings[length(settings)])-1) # remove trailing parenthesis
       settings_df = data.frame(setting = gsub("(^.*)( \\()(.*)", "\\1", settings), value = gsub("(^.*)( \\()(.*)", "\\3", settings), stringsAsFactors = F)
-      if(is.null(model_settings[[alg]]) | input[["replace_values"]] == T){
+      if(is.null(model_settings[[alg]]) | input[["replace_values"]] == "Yes"){
         model_settings[[alg]] = settings_df
       } else {
         settings_old = model_settings[[alg]] %>% filter(!is.na(value))
