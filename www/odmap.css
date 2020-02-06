@@ -23,6 +23,8 @@ textarea.form-control {
 	left: 0%; 
 	right: 0%;
 	opacity: .9;
+	text-align: center;
+	font-size: 120%;
 } 
 
 table.dataTable tbody tr {

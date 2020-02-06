@@ -39,6 +39,7 @@ for(i in 1:nrow(odmap_dict_rmd)){
   switch(odmap_dict_rmd$element_type[i],
          text = knit_text(odmap_dict_rmd$element_id[i]),
          suggestion = knit_suggestion(odmap_dict_rmd$element_id[i]),
+         objective = knit_suggestion(odmap_dict_rmd$element_id[i]),
          extent = knit_extent(odmap_dict_rmd$element_id[i]),
          model_algorithm = knit_suggestion(odmap_dict_rmd$element_id[i]),
          model_setting = knit_model_settings(odmap_dict_rmd$element_id[i]))

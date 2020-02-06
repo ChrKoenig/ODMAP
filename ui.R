@@ -1,5 +1,3 @@
-source("./global.R")
-
 ui <- navbarPage(
   id = "navbar",
   title = "ODMAP v1.0",
@@ -23,21 +21,24 @@ ui <- navbarPage(
              Despite the widespread use of SDMs, the standardisation and documentation of model protocols remains limited. To address these issues, 
              we propose a standard protocol for reporting SDMs. We call this the ODMAP (Overview, Data, Model, Assessment and Prediction) protocol
              as each of its components reflectsthe main steps involved in building SDMs and other empirically-based biodiversity models."), 
-          img(src = "workflow.jpg", width = 700, align = "auto"),
+          img(src = "workflow.jpg", width = "70%", style="display: block; margin-left: auto; margin-right: auto; min-width: 600px;"), br(),
           p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach to documentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses."),
           p("This application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. For further explanation please refer to the original publication (Zurell et al., under review)."),
           em(p("Please cite as follows:")),
-          p("Zurell D,  Franklin J, König C, Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, Leitão PJ, Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz D, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) A standard protocol for describing species distribution models.")
+          p("Zurell D, Franklin J, König C, Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, Leitão PJ, Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz D, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) A standard protocol for describing species distribution models.")
         )),
         tabPanel("How to use this app", value = "howto", fluidPage(
           strong(p("How to create an ODMAP protocol", style = "padding-top: 10px")),
-          p("Enter all relevant information into the fields provided in steps 1-5. The switch on the left allows you to hide optional fields and show only the mandatory fields. 
-            These will differ according to the model objective, which you can choose below."),
-          p("For viewing your progress, please go to the Protocol Viewer (see tabs above)."),
+          p("Enter all relevant information into the fields provided under 'Create a protocol'. Your progress in individual ODMAP sections is displayed in the 
+             side bar at the left. The 'hide optional' switch on the left allows you to only display mandatory fields, which depend on the model objective chosen.
+             A preview of your current protocol as available in the 'Protocol Viewer'."),
           p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. 
-            You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol (.txt-files only).")
+             You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol. 
+             In addition, you can import objects generated with", 
+             a(href = 'https://cran.r-project.org/web/packages/rangeModelMetadata/index.html', 'rangeModelsMetaData', .noWS = "outside"),
+            "R-package to autofill your ODMAP protocol.")
         ))
       )),
       column(width = 2)
@@ -65,9 +66,6 @@ ui <- navbarPage(
           id = "tabset",
           tabPanel("1. Overview", value = "Overview",  fluidPage(
             em(p("Give a brief overview of all important parts of your study.", style = "padding-top: 10px; font-weight: 300")),
-            
-            # TODO delete line
-            # textOutput("input_values"), 
             uiOutput("Overview_UI")
           )),
           
@@ -109,9 +107,9 @@ ui <- navbarPage(
         column(width = 8, 
                p("There are two options for importing data into your ODMAP protocol"),
                p(tags$b("(1) Upload an ODMAP protocol (.csv)"), br(), "This option is convenient if you want to edit or resume working on a previously saved ODMAP protocol."),
-               p(tags$b("(2) Upload an RMMS file (.RDS or .csv)"), br(), "The rangeModelMetaData package of Merow et al. (2019) allows to export standardized metadata 
+               p(tags$b("(2) Upload an RMMS file (.RDS or .csv)"), br(), "The rangeModelMetaData package of Merow et al. (2019) allows exporting standardized metadata 
                          for SDMs directly from R. Note that the objectives of ODMAP and RMMS differ and not all fields can be mapped between both approaches. 
-                         This option is therefore not a replacement for filling out ODMAP, but facilitates time-consuming tasks such as documenting model settings or references. 
+                         This option is therefore not a replacement for filling out ODMAP, but a helpful for e.g. documenting model settings or references. 
                          If RMMS values have been imported, the corresponding field and entity is indicated in parentheses as Field1($Field2)($Field3)-Entity)"),
                fileInput("upload", "Choose file",  accept = c(".csv")),
                uiOutput("Upload_UI")),
