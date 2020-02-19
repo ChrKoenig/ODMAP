@@ -1,9 +1,6 @@
 .row {
 	padding-top: 65px;
 }
-.shiny-input-container:not(.shiny-input-container-inline) {
-	width: 100%;
-}
 
 .selectize-input.items, div.selectize-input.items.not-full.has-options.has-items, .form-control {
         height: 45px;
@@ -12,7 +9,6 @@
 }
 
 textarea.form-control {
-	height: 45px;
 	min-height: 45px;
 	border-radius: 4px;
 }
@@ -26,6 +22,17 @@ textarea.form-control {
 	text-align: center;
 	font-size: 120%;
 } 
+
+nav div ul li {
+	width: 15%;
+	min-width: 160px;
+ 	text-align: center;
+	border-left: solid 1px Grey;
+}
+
+.shiny-input-container:not(.shiny-input-container-inline) {
+	width: 100%;
+}
 
 table.dataTable tbody tr {
 	height: 35px;
