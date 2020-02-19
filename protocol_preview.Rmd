@@ -17,7 +17,7 @@ cat("\n", "______________", "\n", sep = "")
 
 section = ""
 subsection = ""
-odmap_dict_rmd = filter(odmap_dict,! element_id %in% c("o_title_1", "o_authorship_1", "o_authorship_2"))
+odmap_dict_rmd = filter(odmap_dict,! element_id %in% c("o_title_1", "o_authorship_1", "o_authorship_2", elem_hidden))
 for(i in 1:nrow(odmap_dict_rmd)){
   # Find out if new section header needs to be rendered
   section_new = odmap_dict_rmd$section_id[i]
