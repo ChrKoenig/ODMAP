@@ -44,7 +44,7 @@ ui <-  tagList(
     )),
     
     
-    tabPanel("How-to use this app", value = "howto", fluidPage(
+    tabPanel("How to use this app", value = "howto", fluidPage(
       fluidRow(
         column(width = 2),
         column(width = 8, 

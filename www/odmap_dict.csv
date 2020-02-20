@@ -16,7 +16,7 @@ running_number,section,section_id,subsection,subsection_id,element,element_id,el
 1,Overview,o,Predictors,o_predictors,Predictor types,o_predictors_1,Type of predictor variables: choose from list or insert new values,suggestion,"climatic, topographic, edaphic, habitat",0,1,1,1,,,,
 1,Overview,o,Hyptheses,o_concept,Hypotheses,o_concept_1,Hypotheses about species-environment relationships,text,,0,1,1,1,studyObjective,hypotheses,,1
 1,Overview,o,Assumptions,o_assumptions,Model assumptions,o_assumptions_1,Critical model assumptions,text,,0,1,1,1,,,,
-1,Overview,o,Algorithms,o_algorithms,Modelling techniques,o_algorithms_1,State modelling techniques used,model_algorithm,,0,1,1,1,,,,
+1,Overview,o,Algorithms,o_algorithms,Modelling techniques,o_algorithms_1,State modelling techniques used: choose from list or insert new values,model_algorithm,,0,1,1,1,,,,
 2,Overview,o,Algorithms,o_algorithms,Model complexity,o_algorithms_2,Justify model complexity,text,,0,1,1,1,,,,
 3,Overview,o,Algorithms,o_algorithms,Model averaging,o_algorithms_3,Indicate use of model averaging/ensemble modelling,text,,0,1,1,1,,,,
 1,Overview,o,Workflow,o_workflow,Model workflow,o_workflow_1,"Conceptual description of modelling steps including model fitting, assessment and prediction",text,,0,1,1,1,,,,
@@ -27,7 +27,7 @@ running_number,section,section_id,subsection,subsection_id,element,element_id,el
 2,Data,d,Biodiversity data,d_bio,Taxonomic reference system,d_bio_2,Details on taxonomic reference system,text,,0,1,1,1,dataPrep$biological$taxonomicHarmonization,"rule, notes",dataPrep,1
 3,Data,d,Biodiversity data,d_bio,Ecological level,d_bio_3,Ecological level: choose from list or insert new values,suggestion,"individuals, communities, populations, operational taxonomic units, species,",0,1,1,1,,,,
 4,Data,d,Biodiversity data,d_bio,Data sources,d_bio_4,"Details on species data source: e.g., URL/DOI, accession date, database version",text,,0,1,1,1,data$occurrence,sources,base,1
-5,Data,d,Biodiversity data,d_bio,Sampling design,d_bio_5,"Sampling design: spatial design: e.g. random, uniform, stratified), temporal design, nestedness",text,,0,1,1,1,,,,
+5,Data,d,Biodiversity data,d_bio,Sampling design,d_bio_5,"Sampling design: spatial design (e.g. random, uniform, stratified), temporal design, nestedness",text,,0,1,1,1,,,,
 6,Data,d,Biodiversity data,d_bio,Sample size,d_bio_6,"Sample size per taxon (incl. prevalence): e.g., number of observations/counts, prevalence",text,,0,1,1,1,data$occurrence,presenceSampleSize,,1
 7,Data,d,Biodiversity data,d_bio,Clipping,d_bio_7,"Country/region mask, if applicable",text,,1,1,1,1,,,,
 8,Data,d,Biodiversity data,d_bio,Scaling,d_bio_8,"Details on scaling, if applicable: e.g., rasterisation of polygon maps, spatial and temporal thinning, measures to address spatial uncertainties",text,,1,1,1,1,dataPrep$geographic$spatialThin,"rule,notes",dataPrep,0
@@ -40,7 +40,7 @@ running_number,section,section_id,subsection,subsection_id,element,element_id,el
 3,Data,d,Data partitioning,d_part,Test data,d_part_3,"Selection of test (truly independent) data , sensu Hastie, et al. (2009)",text,,1,0,1,1,,,,
 1,Data,d,Predictor variables,d_pred,Predictor variables,d_pred_1,State predictor variables used,text,,0,1,1,1,data$environment,variableNames,base,1
 2,Data,d,Predictor variables,d_pred,Data sources,d_pred_2,"Details on data sources: e.g., URL/DOI, accession date, database version",text,,0,1,1,1,data$environment,sources,base,1
-3,Data,d,Predictor variables,d_pred,Spatial extent,d_pred_3,Spatial extent of raw data,extent,,0,1,1,1,data$environment,extentSet,base,1
+3,Data,d,Predictor variables,d_pred,Spatial extent of raw data,d_pred_3,Spatial extent of raw data,extent,,0,1,1,1,data$environment,extentSet,base,1
 4,Data,d,Predictor variables,d_pred,Spatial resolution,d_pred_4,Spatial resolution of raw data,text,,0,1,1,1,data$environment,resolution,base,1
 5,Data,d,Predictor variables,d_pred,Projection,d_pred_5,Geographical projection,text,,0,1,1,1,,,,
 6,Data,d,Predictor variables,d_pred,Temporal extent,d_pred_6,Temporal extent of raw data,text,,0,1,1,1,data$environment,"yearMin,yearMax",base,0
