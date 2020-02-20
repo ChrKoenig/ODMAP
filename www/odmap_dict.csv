@@ -2,6 +2,7 @@ running_number,section,section_id,subsection,subsection_id,element,element_id,el
 1,Overview,o,Authorship,o_authorship,Study title,o_authorship_1,Study title,text,,0,1,1,1,,,,
 2,Overview,o,Authorship,o_authorship,Author names,o_authorship_2,Author names,author,,0,1,1,1,authorship,names,base,1
 3,Overview,o,Authorship,o_authorship,Contact ,o_authorship_3,Contact email address,text,,0,1,1,1,authorship,contact,base,1
+4,Overview,o,Authorship,o_authorship,doi ,o_authorship_4,DOI (digital object identifier for manuscripts related to the model),text,,0,1,1,1,authorship,doi,base,1
 1,Overview,o,Model objective,o_objective,Model objective,o_objective_1,Model objective,objective,,0,1,1,1,,,,
 2,Overview,o,Model objective,o_objective,Target output,o_objective_2,"Main target output: e.g., suitable vs. unsuitable habitat, continuous habitat suitability index, abundance",text,,0,0,1,1,studyObjective,"rangeType,invasion,transfer,populationType",base,0
 1,Overview,o,Focal Taxon,o_taxon,Focal Taxon,o_taxon_1,Focal taxon,text,,0,1,1,1,,,,
