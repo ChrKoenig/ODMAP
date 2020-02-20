@@ -38,22 +38,22 @@ server <- function(input, output, session) {
   
   render_extent = function(element_id){
     if(element_id == "o_scale_1"){
-          splitLayout(
-            cellWidths = c("170px",  "150px", "150px", "150px", "150px"),
-            p("Spatial extent (long/lat)", style = "padding: 9px 12px"),
-            textAreaInput(inputId = paste0(element_id, "_xmin"), placeholder = "xmin", label = NULL, height = "45px", resize = "none"),
-            textAreaInput(inputId = paste0(element_id, "_xmax"), placeholder = "xmax", label = NULL, height = "45px", resize = "none"),
-            textAreaInput(inputId = paste0(element_id, "_ymin"), placeholder = "ymin", label = NULL, height = "45px", resize = "none"),
-            textAreaInput(inputId = paste0(element_id, "_ymax"), placeholder = "ymax", label = NULL, height = "45px", resize = "none")
+      splitLayout(
+        cellWidths = c("170px",  "150px", "150px", "150px", "150px"),
+        p("Spatial extent (long/lat)", style = "padding: 9px 12px"),
+        textAreaInput(inputId = paste0(element_id, "_xmin"), placeholder = "xmin", label = NULL, height = "45px", resize = "none"),
+        textAreaInput(inputId = paste0(element_id, "_xmax"), placeholder = "xmax", label = NULL, height = "45px", resize = "none"),
+        textAreaInput(inputId = paste0(element_id, "_ymin"), placeholder = "ymin", label = NULL, height = "45px", resize = "none"),
+        textAreaInput(inputId = paste0(element_id, "_ymax"), placeholder = "ymax", label = NULL, height = "45px", resize = "none")
       )
     } else {
-          splitLayout(
-            cellWidths = c("120px",  "150px", "150px", "150px", "150px"),
-            p("Spatial extent", style = "padding: 9px 12px"),
-            textAreaInput(inputId = paste0(element_id, "_xmin"), placeholder = "xmin", label = NULL, height = "45px", resize = "none"),
-            textAreaInput(inputId = paste0(element_id, "_xmax"), placeholder = "xmax", label = NULL, height = "45px", resize = "none"),
-            textAreaInput(inputId = paste0(element_id, "_ymin"), placeholder = "ymin", label = NULL, height = "45px", resize = "none"),
-            textAreaInput(inputId = paste0(element_id, "_ymax"), placeholder = "ymax", label = NULL, height = "45px", resize = "none")
+      splitLayout(
+        cellWidths = c("120px",  "150px", "150px", "150px", "150px"),
+        p("Spatial extent", style = "padding: 9px 12px"),
+        textAreaInput(inputId = paste0(element_id, "_xmin"), placeholder = "xmin", label = NULL, height = "45px", resize = "none"),
+        textAreaInput(inputId = paste0(element_id, "_xmax"), placeholder = "xmax", label = NULL, height = "45px", resize = "none"),
+        textAreaInput(inputId = paste0(element_id, "_ymin"), placeholder = "ymin", label = NULL, height = "45px", resize = "none"),
+        textAreaInput(inputId = paste0(element_id, "_ymax"), placeholder = "ymax", label = NULL, height = "45px", resize = "none")
       )
     }
   }
@@ -222,15 +222,6 @@ server <- function(input, output, session) {
     }
   }
   
-  import_odmap_to_suggestion = function(element_id, values){
-    if(length(input[[element_id]]) == 0 | input[["replace_values"]] == "Yes"){
-      values = unlist(strsplit(values, split = "; "))
-      suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$element_id == element_id], ","))
-      suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
-      updateSelectizeInput(session = session, inputId = element_id, choices = suggestions_new, selected = values)
-    }
-  }
-  
   import_odmap_to_extent = function(element_id, values){
     values = gsub("(^.*)( \\(xmin, xmax, ymin, ymax\\)$)", "\\1", values)
     values_split = unlist(strsplit(values, ", "))
@@ -252,32 +243,31 @@ server <- function(input, output, session) {
   
   # RMMS import functions
   import_rmm_to_text = function(element_id, values){
-    updateTextAreaInput(session = session, inputId = element_id, 
-                        value = paste(paste0(values, " (", names(values), ")"), collapse = ",\n"))
-  }
-  
-  import_rmm_to_authors = function(element_id, values){
-    names_split = unlist(strsplit(values, split = " and "))
-    names_split = strsplit(names_split, split = ", ")
-    authors$df = authors$df[0,] # Delete previous entries
-    for(i in 1:length(names_split)){
-      author_tmp = names_split[[i]]
-      authors$df = rbind(authors$df, data.frame("first_name" = author_tmp[2],  "last_name" = author_tmp[1]))
+    if(input[[element_id]] == "" | input[["replace_values"]] == "Yes"){
+      updateTextAreaInput(session = session, inputId = element_id, 
+                          value = paste(paste0(values, " (", names(values), ")"), collapse = ",\n"))
     }
   }
   
-  import_rmm_to_suggestion = function(element_id, values){
-    values = trimws(unlist(strsplit(values, split = ";")))
-    suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$element_id == element_id], ","))
-    suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
-    updateSelectizeInput(session = session, inputId = paste0(element_id), choices = suggestions_new, selected = as.character(values))
+  import_rmm_to_authors = function(element_id, values){
+    if(nrow(authors$df) == 0 | input[["replace_values"]] == "Yes"){
+      names_split = unlist(strsplit(values, split = " and "))
+      names_split = strsplit(names_split, split = ", ")
+      authors$df = authors$df[0,] # Delete previous entries
+      for(i in 1:length(names_split)){
+        author_tmp = names_split[[i]]
+        authors$df = rbind(authors$df, data.frame("first_name" = author_tmp[2],  "last_name" = author_tmp[1]))
+      }
+    }
   }
   
   import_rmm_to_extent = function(element_id, values){
     values = trimws(unlist(strsplit(values, ";")))
     for(i in 1:length(values)){
       values_split = unlist(strsplit(values[i], ": "))
-      updateTextAreaInput(session = session, inputId = paste0(element_id, "_", values_split[1]), value = paste(values_split[2]))
+      if(input[[paste0(element_id, "_", values_split[1])]] == "" | input[["replace_values"]] == "Yes"){
+        updateTextAreaInput(session = session, inputId = paste0(element_id, "_", values_split[1]), value = paste(values_split[2]))
+      }
     }
   }
   
@@ -297,6 +287,15 @@ server <- function(input, output, session) {
       model_settings_import[[alg]] = settings_df
     }
     updateSelectizeInput(session = session, inputId = "o_algorithms_1", selected = algorithms)
+  }
+  
+  import_suggestion = function(element_id, values){
+    if(length(input[[element_id]]) == 0 | input[["replace_values"]] == "Yes"){
+      values = trimws(unlist(strsplit(values, split = ";")))
+      suggestions = unlist(strsplit(odmap_dict$suggestions[odmap_dict$element_id == element_id], ","))
+      suggestions_new =  sort(trimws(c(suggestions, as.character(values))))
+      updateSelectizeInput(session = session, inputId = paste0(element_id), choices = suggestions_new, selected = as.character(values))
+    }
   }
   
   # ------------------------------------------------------------------------------------------#
@@ -517,6 +516,34 @@ server <- function(input, output, session) {
     }
   })
   
+  # Extent Long/Lat
+  observe({
+    input_names = c("o_scale_1_xmin", "o_scale_1_xmax", "o_scale_1_ymax", "o_scale_1_ymin")
+    print_message = F
+    for(input_name in input_names){
+      if(grepl("xmin|xmax", input_name)){
+        value_range = c(-180, 180)
+      } else { 
+        value_range = c(-90, 90)
+      }
+      
+      if(is.null(input[[input_name]])){
+        next
+      } else if(input[[input_name]] == "") {
+        next
+      } else {
+        input_value = ifelse(is.na(as.numeric(input[[input_name]])), -999, as.numeric(input[[input_name]]))  # Check if input is valid number
+        if(input_value < value_range[1] | input_value > value_range[2]){
+          updateTextAreaInput(session = session, inputId = input_name, value = "")
+          print_message = T
+        }
+      }
+    }
+    if(print_message){
+      showNotification("Please enter valid latitude/longitude coordinates", duration = 3, type = "error")  
+    }
+  })
+  
   # -------------------------------------------
   # Optional fields
   observeEvent(input$hide_optional,{
@@ -659,8 +686,8 @@ server <- function(input, output, session) {
       switch(protocol_upload$element_type[i],
              text = import_odmap_to_text(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              author = import_odmap_to_authors(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
-             objective = import_odmap_to_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
-             suggestion = import_odmap_to_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             objective = import_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             suggestion = import_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              extent = import_odmap_to_extent(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              model_algorithm = import_odmap_to_model_algorithm(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              model_setting = import_model_settings(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]))
@@ -704,11 +731,12 @@ server <- function(input, output, session) {
     }
     
     # 2. Update ODMAP input fields with imported values
+    # TODO respect 
     for(i in 1:length(imported_values)){
       switch(odmap_dict$element_type[which(odmap_dict$element_id == names(imported_values)[i])],
              text = import_rmm_to_text(element_id = names(imported_values)[i], values = imported_values[[i]]),
              author = import_rmm_to_authors(element_id = names(imported_values)[i], values = imported_values[[i]]),
-             suggestion = import_rmm_to_suggestion(element_id = names(imported_values)[i], values = imported_values[[i]]),
+             suggestion = import_suggestion(element_id = names(imported_values)[i], values = imported_values[[i]]),
              extent = import_rmm_to_extent(element_id = names(imported_values)[i], values = imported_values[[i]]),
              model_setting = import_model_settings(element_id = names(imported_values)[i], values = imported_values[[i]]))
     }
