@@ -57,7 +57,7 @@ ui <-  tagList(
              In addition, you can import objects generated with the ", 
                  a(href = 'https://cran.r-project.org/web/packages/rangeModelMetadata/index.html', 'rangeModelsMetaData', .noWS = "outside"),
                  " R-package to autofill your ODMAP protocol.", style = "font-size: 18px;"),
-               p("For questions or feedback contact ", a(href = 'mailto:chr.koenig@outlook.com', "chr.koenig@outlook.com", .noWS = "outside"), ".", style = "font-size: 18px;"),
+               p("For questions or feedback contact ", a(href = 'mailto:chr.koenig@outlook.com', "chr.koenig@outlook.com", .noWS = "outside"), ".", style = "font-size: 18px;")
         )),
       column(width = 2)
     )),
