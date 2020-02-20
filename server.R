@@ -389,8 +389,15 @@ server <- function(input, output, session) {
   
   output$protocol_download = downloadHandler(
     filename = function(){
-      # TODO improve file naming
-      paste0("ODMAP_protocol_", Sys.Date(), ".", input$document_format)
+      author_list = authors$df$last_name
+      if(length(author_list) > 2){
+        name_string = paste0(author_list[1],"EtAl_")
+      } else if(length(author_list) == 2){
+        name_string = paste0(author_list[1], author_list[2])
+      } else {
+        name_string = author_list[1]
+      }
+      paste0("ODMAP_", name_string, "_", Sys.Date(), ".", input$document_format)
     },
     content = function(file){
       odmap_download = odmap_dict %>% 
@@ -731,7 +738,6 @@ server <- function(input, output, session) {
     }
     
     # 2. Update ODMAP input fields with imported values
-    # TODO respect 
     for(i in 1:length(imported_values)){
       switch(odmap_dict$element_type[which(odmap_dict$element_id == names(imported_values)[i])],
              text = import_rmm_to_text(element_id = names(imported_values)[i], values = imported_values[[i]]),
