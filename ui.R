@@ -125,7 +125,7 @@ ui <-  tagList(
                p(tags$b("(1) Upload an ODMAP protocol (.csv)"), br(), "This option is convenient if you want to edit or resume working on a previously saved ODMAP protocol.", style = "font-size: 18px;"),
                p(tags$b("(2) Upload an RMM file (.RDS or .csv)"), br(), "The rangeModelMetaData package of Merow et al. (2019) allows exporting standardized metadata 
                          for SDMs directly from R. Note that the objectives of ODMAP and RMM differ and not all fields can be mapped between both approaches. 
-                         This option is therefore not a replacement for filling out ODMAP, but a helpful for e.g. documenting model settings or references. 
+                         This option is therefore not a replacement for filling out ODMAP, but may be helpful for e.g. documenting model settings or references. 
                          If RMM values have been imported, the corresponding field and entity is indicated in parentheses as Field1($Field2)($Field3)-Entity)", style = "font-size: 18px;"),
                p("Choose file", style = "font-size: 18px; font-weight: bold"),
                fileInput("upload", label = NULL, accept = c(".csv")),
