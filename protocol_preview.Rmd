@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = FALSE, eval=TRUE, message=FALSE, warning=FALSE)
 
 ```{r, results = 'asis'}
 cat("<h4><center> - ODMAP protocol - </center></h4>", sep = "")
-cat("<h2><center>", input$o_title_1, "</center></h2>", sep = "")
+cat("<h2><center>", input$o_authorship_1, "</center></h2>", sep = "")
 cat("<p><b>Authors: </b>", paste(authors$df$first_name, authors$df$last_name, collapse = ", "), "</p>", sep = "")
 cat("<p><b>Contact: </b>", input$o_authorship_2, "</p>", sep = "")
 cat("<p><b>Date: </b>", as.character(Sys.Date()), "</p>", sep = "")
