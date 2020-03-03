@@ -222,6 +222,12 @@ server <- function(input, output, session) {
     }
   }
   
+  import_odmap_to_model_objective = function(element_id, values){
+    if(input[[element_id]] == "" | input[["replace_values"]] == "Yes"){
+      updateSelectizeInput(session = session, inputId = "o_objective_1", selected = values)
+    }
+  }
+  
   import_odmap_to_extent = function(element_id, values){
     values = gsub("(^.*)( \\(xmin, xmax, ymin, ymax\\)$)", "\\1", values)
     values_split = unlist(strsplit(values, ", "))
@@ -394,8 +400,10 @@ server <- function(input, output, session) {
         name_string = paste0(author_list[1],"EtAl_")
       } else if(length(author_list) == 2){
         name_string = paste0(author_list[1], author_list[2])
-      } else {
+      } else if(length(author_list) == 1){
         name_string = author_list[1]
+      } else {
+        name_string = "Anonymous"
       }
       paste0("ODMAP_", name_string, "_", Sys.Date(), ".", input$document_format)
     },
@@ -432,12 +440,12 @@ server <- function(input, output, session) {
       } else {
         src <- normalizePath("protocol_output.Rmd")
         
-        # temporarily switch to the temp dir, in case you do not have write permission to the current working directory
+        # temporarily switch to the temp dir, in case of missing write permission in the current working directory
         wd_orig <- setwd(tempdir())
         on.exit(setwd(wd_orig))
         file.copy(src, "protocol_output.Rmd", overwrite = TRUE)
         odmap_download = rmarkdown::render("protocol_output.Rmd", rmarkdown::word_document(),
-                                           params = list(study_title = input$o_title_1, authors = paste(authors$df$first_name, authors$df$last_name, collapse = ", ")))
+                                           params = list(study_title = paste(input$o_authorship_1), authors = paste(authors$df$first_name, authors$df$last_name, collapse = ", ")))
         file.rename(odmap_download, file)
       }
     }
@@ -693,7 +701,7 @@ server <- function(input, output, session) {
       switch(protocol_upload$element_type[i],
              text = import_odmap_to_text(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              author = import_odmap_to_authors(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
-             objective = import_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
+             objective = import_odmap_to_model_objective(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              suggestion = import_suggestion(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              extent = import_odmap_to_extent(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
              model_algorithm = import_odmap_to_model_algorithm(element_id = protocol_upload$element_id[i], values = protocol_upload$Value[i]),
