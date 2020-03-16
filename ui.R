@@ -28,7 +28,7 @@ ui <-  tagList(
                p("However, models must be fit for purpose, with all important aspects of their development and applications properly considered. 
              Despite the widespread use of SDMs, the standardisation and documentation of model protocols remains limited. To address these issues, 
              we propose a standard protocol for reporting SDMs. We call this the ODMAP (Overview, Data, Model, Assessment and Prediction) protocol
-             as each of its components reflectsthe main steps involved in building SDMs and other empirically-based biodiversity models.", style= "font-size: 18px;"), 
+             as each of its components reflects the main steps involved in building SDMs and other empirically-based biodiversity models.", style= "font-size: 18px;"), 
                img(src = "workflow.jpg", width = "60%", style="display: block; margin-left: auto; margin-right: auto; min-width: 500px;"), br(),
                p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach to documentation that ensures transparency and reproducibility, facilitating peer review and 
@@ -37,7 +37,7 @@ ui <-  tagList(
                  For further explanation please refer to the original publication (Zurell et al., under review).", style= "font-size: 18px;"),
                em(p("Please cite as follows:", style = "font-size: 18px;")),
                p("Zurell D, Franklin J, König C, Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, Leitão PJ, 
-                 Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz D, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) 
+                 Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz DR, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) 
                  A standard protocol for describing species distribution models.", style= "font-size: 18px;")
         )),
       column(width = 2)
@@ -50,8 +50,8 @@ ui <-  tagList(
         column(width = 8, 
                strong(p("How to create an ODMAP protocol", style = "padding-top: 10px; font-size: 30px; font-weight:bold;")),
                p("Enter all relevant information into the fields provided under 'Create a protocol'. Your progress in individual ODMAP sections is displayed in the 
-             side bar at the left. The 'hide optional' switch on the left allows you to only display mandatory fields, which depend on the model objective chosen.
-             A preview of your current protocol as available in the 'Protocol Viewer'.", style = "font-size: 18px;"),
+             side bar at the left. The 'Hide optional fields' switch on the left allows you to only display mandatory fields, which depend on the model objective chosen.
+             A preview of your current protocol is available in the 'Protocol Viewer'.", style = "font-size: 18px;"),
                p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. 
              You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol. 
              In addition, you can import objects generated with the ", 

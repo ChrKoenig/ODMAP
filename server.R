@@ -286,9 +286,14 @@ server <- function(input, output, session) {
       settings_split = unlist(regmatches(settings_tmp, regexpr(": ", settings_tmp), invert = TRUE)) # split at first instance of ":"
       alg = settings_split[1]
       algorithms = c(algorithms, alg)
-      settings = unlist(strsplit(settings_split[2], split = "\\), ")) # "), " is a more reliable split string than ","
-      settings[length(settings)] = substr(settings[length(settings)], 1, nchar(settings[length(settings)])-1) # remove trailing parenthesis
-      settings_df = data.frame(setting = gsub("(^.*)( \\()(.*)", "\\1", settings), value = gsub("(^.*)( \\()(.*)", "\\3", settings), stringsAsFactors = F)
+      values_indices = gregexpr("\\((?>[^()]|(?R))*\\)", settings_split[2], perl = T) # indices of model settings in parentheses and string length per setting
+      values_start = unlist(values_indices) + 1
+      values_end = values_start + attr(values_indices[[1]], "match.length") - 3
+      settings_start = c(1, values_end[-length(values_end)] + 4)
+      settings_end = c(values_start - 3)
+      values_extr = substring(settings_split[2], values_start, values_end)
+      settings_extr = substring(settings_split[2], settings_start, settings_end)
+      settings_df = data.frame(setting = settings_extr, value = values_extr, stringsAsFactors = F)
       model_settings_import[["algorithms"]] = c(model_settings_import[["algorithms"]], alg)
       model_settings_import[[alg]] = settings_df
     }

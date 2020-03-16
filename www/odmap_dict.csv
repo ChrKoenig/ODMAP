@@ -2,33 +2,33 @@ running_number,section,section_id,subsection,subsection_id,element,element_id,el
 1,Overview,o,Authorship,o_authorship,Study title,o_authorship_1,Study title,text,,0,1,1,1,,,,
 2,Overview,o,Authorship,o_authorship,Author names,o_authorship_2,Author names,author,,0,1,1,1,authorship,names,base,1
 3,Overview,o,Authorship,o_authorship,Contact ,o_authorship_3,Contact email address,text,,0,1,1,1,authorship,contact,base,1
-4,Overview,o,Authorship,o_authorship,doi ,o_authorship_4,DOI (digital object identifier for manuscripts related to the model),text,,0,1,1,1,authorship,doi,base,1
+4,Overview,o,Authorship,o_authorship,Study link,o_authorship_4,"Link to study (DOI, web address)",text,,0,1,1,1,,,,
 1,Overview,o,Model objective,o_objective,Model objective,o_objective_1,Model objective,objective,,0,1,1,1,,,,
 2,Overview,o,Model objective,o_objective,Target output,o_objective_2,"Main target output: e.g., suitable vs. unsuitable habitat, continuous habitat suitability index, abundance",text,,0,0,1,1,studyObjective,"rangeType,invasion,transfer,populationType",base,0
 1,Overview,o,Focal Taxon,o_taxon,Focal Taxon,o_taxon_1,Focal taxon,text,,0,1,1,1,,,,
 1,Overview,o,Location,o_location,Location,o_location_1,Location of study area,text,,0,1,1,1,,,,
 1,Overview,o,Scale of Analysis,o_scale,Spatial extent,o_scale_1,Spatial extent (Longitude/Latitude),extent,,0,1,1,1,,,,
-2,Overview,o,Scale of Analysis,o_scale,Spatial resolution,o_scale_2,Spatial resolution,text,,1,1,1,1,,,,
+2,Overview,o,Scale of Analysis,o_scale,Spatial resolution,o_scale_2,Spatial resolution (km),text,,1,1,1,1,,,,
 3,Overview,o,Scale of Analysis,o_scale,Temporal extent,o_scale_3,Temporal extent / time period,text,,0,1,1,1,data$occurrence,"yearMin,yearMax",base,1
 4,Overview,o,Scale of Analysis,o_scale,Temporal resolution,o_scale_4,Temporal resolution,text,,1,1,1,1,,,,
 5,Overview,o,Scale of Analysis,o_scale,Boundary,o_scale_5,Type of extent boundary: choose from list or insert new values,suggestion,"rectangle, natural, political",0,1,1,1,,,,
 1,Overview,o,Biodiversity data,o_bio,Observation type,o_bio_1,Observation type: choose from list or insert new values,suggestion,"standardised monitoring data, field survey, range map, citizen science, GPS tracking",0,1,1,1,,,,
 2,Overview,o,Biodiversity data,o_bio,Response data type,o_bio_2,Response/data type: choose from list or insert new values,suggestion,"presence-only, presence/absence, point occurrence, counts, richness",0,1,1,1,data$occurrence,dataType,base,1
 1,Overview,o,Predictors,o_predictors,Predictor types,o_predictors_1,Type of predictor variables: choose from list or insert new values,suggestion,"climatic, topographic, edaphic, habitat",0,1,1,1,,,,
-1,Overview,o,Hyptheses,o_concept,Hypotheses,o_concept_1,Hypotheses about species-environment relationships,text,,0,1,1,1,studyObjective,hypotheses,,1
+1,Overview,o,Hypotheses,o_concept,Hypotheses,o_concept_1,Hypotheses about species-environment relationships,text,,0,1,1,1,studyObjective,hypotheses,,1
 1,Overview,o,Assumptions,o_assumptions,Model assumptions,o_assumptions_1,Critical model assumptions,text,,0,1,1,1,,,,
-1,Overview,o,Algorithms,o_algorithms,Modelling techniques,o_algorithms_1,State modelling techniques used: choose from list or insert new values,model_algorithm,,0,1,1,1,,,,
-2,Overview,o,Algorithms,o_algorithms,Model complexity,o_algorithms_2,Justify model complexity,text,,0,1,1,1,,,,
-3,Overview,o,Algorithms,o_algorithms,Model averaging,o_algorithms_3,Indicate use of model averaging/ensemble modelling,text,,0,1,1,1,,,,
+1,Overview,o,Algorithms,o_algorithms,Modelling techniques,o_algorithms_1,Modelling techniques used,model_algorithm,,0,1,1,1,,,,
+2,Overview,o,Algorithms,o_algorithms,Model complexity,o_algorithms_2,Justification of model complexity,text,,0,1,1,1,,,,
+3,Overview,o,Algorithms,o_algorithms,Model averaging,o_algorithms_3,Use of model averaging/ensemble modelling,text,,0,1,1,1,,,,
 1,Overview,o,Workflow,o_workflow,Model workflow,o_workflow_1,"Conceptual description of modelling steps including model fitting, assessment and prediction",text,,0,1,1,1,,,,
-1,Overview,o,Software,o_software,Software,o_software_1,Specify modelling platform incl. version and key packages used,text,,0,1,1,1,code$software,"platform,packages",base,1
-2,Overview,o,Software,o_software,Code availability,o_software_2,"Specify availability of codes, e.g. code links",text,,0,1,1,1,code,"demoCodeLink,vignetteCodeLink,fullCodeLink",base,1
-3,Overview,o,Software,o_software,Data availability,o_software_3,"Specify availability of data, e.g. data links",text,,0,1,1,1,code,"demoDataLink,vignetteDataLink,fullDataLink",base,1
+1,Overview,o,Software,o_software,Software,o_software_1,Modelling platform incl. version and key packages used,text,,0,1,1,1,code$software,"platform,packages",base,1
+2,Overview,o,Software,o_software,Code availability,o_software_2,"Availability of codes, e.g. code links",text,,0,1,1,1,code,"demoCodeLink,vignetteCodeLink,fullCodeLink",base,1
+3,Overview,o,Software,o_software,Data availability,o_software_3,"Availability of data, e.g. data links",text,,0,1,1,1,code,"demoDataLink,vignetteDataLink,fullDataLink",base,1
 1,Data,d,Biodiversity data,d_bio,Taxon names,d_bio_1,"Taxon names: e.g., names of subspecies, species, genus, families",text,,0,1,1,1,data$occurrence,taxon,base,1
 2,Data,d,Biodiversity data,d_bio,Taxonomic reference system,d_bio_2,Details on taxonomic reference system,text,,0,1,1,1,dataPrep$biological$taxonomicHarmonization,"rule, notes",dataPrep,1
 3,Data,d,Biodiversity data,d_bio,Ecological level,d_bio_3,Ecological level: choose from list or insert new values,suggestion,"individuals, communities, populations, operational taxonomic units, species,",0,1,1,1,,,,
 4,Data,d,Biodiversity data,d_bio,Data sources,d_bio_4,"Details on species data source: e.g., URL/DOI, accession date, database version",text,,0,1,1,1,data$occurrence,sources,base,1
-5,Data,d,Biodiversity data,d_bio,Sampling design,d_bio_5,"Sampling design: spatial design (e.g. random, uniform, stratified), temporal design, nestedness",text,,0,1,1,1,,,,
+5,Data,d,Biodiversity data,d_bio,Sampling design,d_bio_5,"Sampling design: spatial design: e.g. random, uniform, stratified), temporal design, nestedness",text,,0,1,1,1,,,,
 6,Data,d,Biodiversity data,d_bio,Sample size,d_bio_6,"Sample size per taxon (incl. prevalence): e.g., number of observations/counts, prevalence",text,,0,1,1,1,data$occurrence,presenceSampleSize,,1
 7,Data,d,Biodiversity data,d_bio,Clipping,d_bio_7,"Country/region mask, if applicable",text,,1,1,1,1,,,,
 8,Data,d,Biodiversity data,d_bio,Scaling,d_bio_8,"Details on scaling, if applicable: e.g., rasterisation of polygon maps, spatial and temporal thinning, measures to address spatial uncertainties",text,,1,1,1,1,dataPrep$geographic$spatialThin,"rule,notes",dataPrep,0
@@ -41,9 +41,9 @@ running_number,section,section_id,subsection,subsection_id,element,element_id,el
 3,Data,d,Data partitioning,d_part,Test data,d_part_3,"Selection of test (truly independent) data , sensu Hastie, et al. (2009)",text,,1,0,1,1,,,,
 1,Data,d,Predictor variables,d_pred,Predictor variables,d_pred_1,State predictor variables used,text,,0,1,1,1,data$environment,variableNames,base,1
 2,Data,d,Predictor variables,d_pred,Data sources,d_pred_2,"Details on data sources: e.g., URL/DOI, accession date, database version",text,,0,1,1,1,data$environment,sources,base,1
-3,Data,d,Predictor variables,d_pred,Spatial extent of raw data,d_pred_3,Spatial extent of raw data,extent,,0,1,1,1,data$environment,extentSet,base,1
+3,Data,d,Predictor variables,d_pred,Spatial extent,d_pred_3,Spatial extent of raw data,extent,,0,1,1,1,data$environment,extentSet,base,1
 4,Data,d,Predictor variables,d_pred,Spatial resolution,d_pred_4,Spatial resolution of raw data,text,,0,1,1,1,data$environment,resolution,base,1
-5,Data,d,Predictor variables,d_pred,Projection,d_pred_5,Geographical projection,text,,0,1,1,1,,,,
+5,Data,d,Predictor variables,d_pred,Coordinate reference system,d_pred_5,"Coordinate reference system (CRS), e.g. proj4 string, EPSG code, ESRI PE string",text,,0,1,1,1,,,,
 6,Data,d,Predictor variables,d_pred,Temporal extent,d_pred_6,Temporal extent of raw data,text,,0,1,1,1,data$environment,"yearMin,yearMax",base,0
 7,Data,d,Predictor variables,d_pred,Temporal resolution,d_pred_7,"Temporal resolution of raw data, if applicable",text,,1,1,1,1,,,,
 8,Data,d,Predictor variables,d_pred,Data processing,d_pred_8,"Details on data processing and on spatial, temporal and thematic scaling: e.g. upscaling/downscaling, transformations, normalisations, thematic aggregations (e.g. of land cover classes), measures to address spatial uncertainties",text,,1,1,1,1,,,,
