@@ -5,7 +5,7 @@ output: html_document
 
 
 
-<h4><center> - ODMAP protocol - </center></h4><h2><center>My study</center></h2><p><b>Authors: </b>Christian König, Guillermo Fandos</p><p><b>Contact: </b></p><p><b>Date: </b>2020-02-21</p>
+<h4><center> - ODMAP protocol - </center></h4><h2><center></center></h2><p><b>Authors: </b></p><p><b>Contact: </b></p><p><b>Date: </b>2020-04-17</p>
 ______________
 
 
@@ -14,22 +14,31 @@ ______________
 
 #### Authorship 
 
-Contact : chr.koenig@outlook.com
+
+ <span style='color:#DC3522'>\<Contact \> </span>
+
+
+ <span style='color:#DC3522'>\<Study link\> </span>
 
 
 #### Model objective 
 
-Model objective: Inference and explanation
+Model objective: 
+
+
+ <span style='color:#DC3522'>\<Target output\> </span>
 
 
 #### Focal Taxon 
 
-Focal Taxon: European Birds
+
+ <span style='color:#DC3522'>\<Focal Taxon\> </span>
 
 
 #### Location 
 
-Location: Switzerland
+
+ <span style='color:#DC3522'>\<Location\> </span>
 
 
 #### Scale of Analysis 
@@ -40,14 +49,14 @@ Location: Switzerland
 
  <span style='color:#DC3522'>\<Temporal extent\> </span>
 
-Temporal resolution: 2000-2018
 
-Boundary: natural
+ <span style='color:#DC3522'>\<Boundary\> </span>
 
 
 #### Biodiversity data 
 
-Observation type: citizen science, field survey, GPS tracking
+
+ <span style='color:#DC3522'>\<Observation type\> </span>
 
 
  <span style='color:#DC3522'>\<Response data type\> </span>
@@ -59,7 +68,7 @@ Observation type: citizen science, field survey, GPS tracking
  <span style='color:#DC3522'>\<Predictor types\> </span>
 
 
-#### Hyptheses 
+#### Hypotheses 
 
 
  <span style='color:#DC3522'>\<Hypotheses\> </span>
@@ -73,7 +82,8 @@ Observation type: citizen science, field survey, GPS tracking
 
 #### Algorithms 
 
-Modelling techniques: maxent, glm
+
+ <span style='color:#DC3522'>\<Modelling techniques\> </span>
 
 
  <span style='color:#DC3522'>\<Model complexity\> </span>
@@ -130,6 +140,15 @@ Modelling techniques: maxent, glm
  <span style='color:#DC3522'>\<Background data\> </span>
 
 
+#### Data partitioning 
+
+
+ <span style='color:#DC3522'>\<Training data\> </span>
+
+
+ <span style='color:#DC3522'>\<Validation data\> </span>
+
+
 #### Predictor variables 
 
 
@@ -139,19 +158,22 @@ Modelling techniques: maxent, glm
  <span style='color:#DC3522'>\<Data sources\> </span>
 
 
- <span style='color:#DC3522'>\<Spatial extent of raw data\> </span>
+ <span style='color:#DC3522'>\<Spatial extent\> </span>
 
 
  <span style='color:#DC3522'>\<Spatial resolution\> </span>
 
 
- <span style='color:#DC3522'>\<Projection\> </span>
+ <span style='color:#DC3522'>\<Coordinate reference system\> </span>
 
 
  <span style='color:#DC3522'>\<Temporal extent\> </span>
 
 
 #### Transfer data 
+
+
+ <span style='color:#DC3522'>\<Data sources\> </span>
 
 
  <span style='color:#DC3522'>\<Spatial extent\> </span>
@@ -161,6 +183,12 @@ Modelling techniques: maxent, glm
 
 
  <span style='color:#DC3522'>\<Temporal extent\> </span>
+
+
+ <span style='color:#DC3522'>\<Models and scenarios\> </span>
+
+
+ <span style='color:#DC3522'>\<Quantification of Novelty\> </span>
 
 
 ## Model 
@@ -174,9 +202,11 @@ Modelling techniques: maxent, glm
 
 #### Model settings 
 
-maxent: featureSet (1), featureRule (anarchy), notes (it was just a standard lm but we call it glm to sound fancier)
 
-glm: family (binomial), formula (y ~ x1+x2)
+ <span style='color:#DC3522'>\<Model settings (fitting)\> </span>
+
+
+ <span style='color:#DC3522'>\<Model settings (extrapolation)\> </span>
 
 
 #### Model estimates 
@@ -191,6 +221,12 @@ glm: family (binomial), formula (y ~ x1+x2)
  <span style='color:#DC3522'>\<Spatial autocorrelation\> </span>
 
 
+#### Threshold selection 
+
+
+ <span style='color:#DC3522'>\<Threshold selection\> </span>
+
+
 ## Assessment 
 
 
@@ -200,7 +236,34 @@ glm: family (binomial), formula (y ~ x1+x2)
  <span style='color:#DC3522'>\<Performance on training data\> </span>
 
 
+ <span style='color:#DC3522'>\<Performance on validation data\> </span>
+
+
+ <span style='color:#DC3522'>\<Performance on test data\> </span>
+
+
 #### Plausibility check 
 
 
  <span style='color:#DC3522'>\<Response shapes\> </span>
+
+
+ <span style='color:#DC3522'>\<Expert judgement\> </span>
+
+
+## Prediction 
+
+
+#### Prediction output 
+
+
+ <span style='color:#DC3522'>\<Prediction unit\> </span>
+
+
+#### Uncertainty quantification 
+
+
+ <span style='color:#DC3522'>\<Scenario uncertainty\> </span>
+
+
+ <span style='color:#DC3522'>\<Novel environments\> </span>

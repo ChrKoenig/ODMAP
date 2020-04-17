@@ -33,12 +33,12 @@ ui <-  tagList(
                p("The ODMAP protocol serves two main purposes. First, it provides a checklist for authors detailing key steps for model building and analyses. 
              Second, it introduces a standard approach to documentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses.", style= "font-size: 18px;"),
-               p("This application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. 
+               p("This Shiny web application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. 
                  For further explanation please refer to the original publication (Zurell et al., under review).", style= "font-size: 18px;"),
                em(p("Please cite as follows:", style = "font-size: 18px;")),
                p("Zurell D, Franklin J, König C, Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, Leitão PJ, 
                  Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz DR, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) 
-                 A standard protocol for describing species distribution models.", style= "font-size: 18px;")
+                 A standard protocol for describing species distribution models. Ecography", style= "font-size: 18px;")
         )),
       column(width = 2)
     )),
@@ -52,12 +52,13 @@ ui <-  tagList(
                p("Enter all relevant information into the fields provided under 'Create a protocol'. Your progress in individual ODMAP sections is displayed in the 
              side bar at the left. The 'Hide optional fields' switch on the left allows you to only display mandatory fields, which depend on the model objective chosen.
              A preview of your current protocol is available in the 'Protocol Viewer'.", style = "font-size: 18px;"),
-               p("You can always save your progress by clicking the download button on the left. After downloading your protocol, it is safe to close the Shiny app. 
-             You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP protocol. 
+               p("You can always save your progress by clicking the download button on the left. We recommend always downloading the csv file as this will allow you to resume your work later. After downloading your protocol as csv, it is safe to close the Shiny app. For a better layout, you can also download the ODMAP protocol as word document. Please note that word documents cannot be uploaded again to the Shiny app.", style = "font-size: 18px;"),
+               p("You will be able to resume working on your protocol by choosing the Upload tab above and uploading your previously saved ODMAP csv file. 
              In addition, you can import objects generated with the ", 
                  a(href = 'https://cran.r-project.org/web/packages/rangeModelMetadata/index.html', 'rangeModelsMetaData', .noWS = "outside"),
                  " R-package to autofill your ODMAP protocol.", style = "font-size: 18px;"),
-               p("For questions or feedback contact ", a(href = 'mailto:chr.koenig@outlook.com', "chr.koenig@outlook.com", .noWS = "outside"), ".", style = "font-size: 18px;")
+               p("For questions or feedback regarding the Shiny app please contact ", a(href = 'mailto:chr.koenig@outlook.com', "chr.koenig@outlook.com", .noWS = "outside"), ".", style = "font-size: 18px;"),
+               p("For conceptual questions or feedback regarding the ODMAP protocol please contact ", a(href = 'mailto:damaris@zurell.de', "damaris@zurell.de", .noWS = "outside"), ".", style = "font-size: 18px;")
         )),
       column(width = 2)
     )),
