@@ -57,8 +57,8 @@ ui <-  tagList(
              In addition, you can import objects generated with the ", 
                  a(href = 'https://cran.r-project.org/web/packages/rangeModelMetadata/index.html', 'rangeModelsMetaData', .noWS = "outside"),
                  " R-package to autofill your ODMAP protocol.", style = "font-size: 18px;"),
-               p("For questions or feedback regarding the Shiny app please contact ", a(href = 'mailto:chr.koenig@outlook.com', "chr.koenig@outlook.com", .noWS = "outside"), ".", style = "font-size: 18px;"),
-               p("For conceptual questions or feedback regarding the ODMAP protocol please contact ", a(href = 'mailto:damaris@zurell.de', "damaris@zurell.de", .noWS = "outside"), ".", style = "font-size: 18px;")
+               p("Should you have any conceptual questions or feedback regarding the ODMAP protocol, or any technical questions and feedback regarding the Shiny app, please do not hesitate to contact us.", style = "font-size: 18px;"),
+               p("Contact: ", a(href = 'mailto:odmap@wsl.ch', "odmap@wsl.ch", .noWS = "outside"), ".", style = "font-size: 18px;")
         )),
       column(width = 2)
     )),
