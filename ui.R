@@ -9,13 +9,21 @@ library(DT)
 ui <-  tagList(
   tags$head(tags$style(HTML(readChar("www/odmap.css", file.info("www/odmap.css")$size)))),
   useShinyjs(),
+
   navbarPage(
     id = "navbar",
-    title = "ODMAP v1.0",
+    windowTitle = "ODMAP v1.0",
+    title = div(
+      div(
+        id = "github_logo", 
+        a(img(src="github_logo_40px.png"), href = "https://github.com/ChrKoenig/ODMAP", target="_blank")
+      ),
+      "ODMAP v1.0"
+    ),
     position = "fixed-top",
     theme = shinytheme("cosmo"),
     selected = "about",
-
+  
     # HOME TAB
     tabPanel("What is ODMAP?", value = "about", fluidPage(
       fluidRow(

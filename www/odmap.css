@@ -30,6 +30,13 @@ nav div ul li {
 	border-left: solid 1px Grey;
 }
 
+#github_logo{
+  position: fixed;
+  height = 20px;
+  right: 10px;
+  top: 5px;
+}
+
 .shiny-input-container:not(.shiny-input-container-inline) {
 	width: 100%;
 }
