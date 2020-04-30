@@ -42,11 +42,11 @@ ui <-  tagList(
              Second, it introduces a standard approach to documentation that ensures transparency and reproducibility, facilitating peer review and 
              expert evaluation of model quality as well as meta-analyses.", style= "font-size: 18px;"),
                p("This Shiny web application helps to implement the ODMAP approach and produces well formatted protocols that can be exported for further usage. 
-                 For further explanation please refer to the original publication (Zurell et al., under review).", style= "font-size: 18px;"),
+                 For further explanation please refer to the original publication (Zurell et al., accepted).", style= "font-size: 18px;"),
                em(p("Please cite as follows:", style = "font-size: 18px;")),
                p("Zurell D, Franklin J, König C, Bouchet PJ, Serra-Diaz JM, Dormann CF, Elith J, Fandos Guzman G, Feng X, Guillera-Arroita G, Guisan A, Leitão PJ, 
-                 Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz DR, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (under review) 
-                 A standard protocol for describing species distribution models. Ecography", style= "font-size: 18px;")
+                 Lahoz-Monfort JJ, Park DS, Peterson AT,  Raacciuolo G, Schmatz DR, Schröder B, Thuiller W, Yates KL, Zimmermann NE, Merow C (accepted) 
+                 A standard protocol for describing species distribution models. Ecography. DOI: 10.1111/ecog.04960.", style= "font-size: 18px;")
         )),
       column(width = 2)
     )),
