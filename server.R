@@ -279,7 +279,7 @@ server <- function(input, output, session) {
   
   # Generic import functions
   import_model_settings = function(element_id, values){
-    settings_all = unlist(strsplit(values, split = "; "))
+    settings_all = unlist(strsplit(values, split = "); ",))
     algorithms = c()
     for(settings_tmp in settings_all){
       if(grepl("no settings provided", settings_tmp)){next}
