@@ -1,6 +1,6 @@
 # ODMAP
 
-** IMPORTANT: This repository is no longer maintained. The ODMAP repository has moved to: https://github.com/UP-macroecology/ODMAP **
+**IMPORTANT: This repository is no longer maintained. The ODMAP repository has moved to: https://github.com/UP-macroecology/ODMAP**
 
 Species distribution models (SDMs) constitute the most common class of biodiversity models. The advent of ready-to-use software packages and increasing availability of digital geo-information have considerably assisted the application of SDMs in recent years enabling their use in informing conservation and management, and quantifying impacts from global change.
 
